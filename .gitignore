@@ -97,3 +97,7 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+
+# Others
+*/docs/*
+*/docs

@@ -5,9 +5,16 @@
   "main": "index.js",
   "scripts": {
     "start": "tsx server.ts",
-    "dev": "tsx watch server.ts",
+    "dev": "powershell \"taskkill /F /IM node.exe 2>$null; Start-Sleep 1; tsx --watch server.ts\"",
+    "dev:clean": "powershell \"taskkill /F /IM node.exe 2>$null; Start-Sleep 2; tsx --watch server.ts\"",
     "build": "tsc",
-    "start:prod": "node dist/server.js"
+    "start:prod": "node dist/server.js",
+    "migrate": "node src/scripts/apply-migration.js",
+    "migrate:generate": "npx drizzle-kit generate",
+    "db:setup": "npm run migrate:generate && npm run migrate",
+    "db:reset": "powershell \"Remove-Item -Force src/database/dev.db -ErrorAction SilentlyContinue\" && npm run migrate",
+    "db:check": "node src/scripts/check-db.js",
+    "drizzle:studio": "npx drizzle-kit studio"
   },
   "keywords": [],
   "author": "",
@@ -15,11 +22,16 @@
   "description": "",
   "dependencies": {
     "@fastify/formbody": "^8.0.2",
+    "@types/better-sqlite3": "^7.6.13",
+    "better-sqlite3": "^12.4.1",
+    "dotenv": "^17.2.2",
+    "drizzle-orm": "^0.44.5",
     "fastify": "^5.6.1",
     "pino-pretty": "^13.1.1"
   },
   "devDependencies": {
     "@types/node": "^24.5.2",
+    "drizzle-kit": "^0.31.5",
     "tsx": "^4.20.6",
     "typescript": "^5.9.2"
   }

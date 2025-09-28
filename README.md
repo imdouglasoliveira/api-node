@@ -11,6 +11,8 @@ API simples em Node.js + TypeScript usando Fastify para gerenciamento de cursos.
 - **TypeScript** - Superset do JavaScript com tipagem estática
 - **tsx** - Executor TypeScript para desenvolvimento
 - **pino-pretty** - Logger formatado para desenvolvimento
+- **SQLite** - Banco de dados embarcado para desenvolvimento
+- **Drizzle ORM** - ORM moderno e type-safe
 
 ## Configuração
 1. Clone o repositório e acesse a pasta do projeto:
@@ -22,6 +24,11 @@ cd api-node
 2. Instale as dependências:
 ```bash
 npm install
+```
+
+3. Configure o banco de dados:
+```bash
+npm run db:setup
 ```
 
 ## Executando o servidor
@@ -91,12 +98,21 @@ Cria um novo curso.
 ```
 api-node/
 ├── docs/                 # Documentação do projeto
-├── node_modules/         # Dependências
+├── drizzle/              # Migrações do banco de dados
+├── src/
+│   ├── database/         # Schema e cliente do banco
+│   │   ├── schema.ts     # Definição das tabelas
+│   │   ├── client.ts     # Cliente SQLite
+│   │   └── dev.db        # Arquivo do banco SQLite
+│   ├── requests/         # Arquivos de requisições HTTP
+│   │   └── requisicoes.http  # Exemplos de requisições
+│   └── scripts/          # Scripts utilitários
+│       ├── apply-migration.js  # Aplicar migrações
+│       └── check-db.js          # Verificar banco
 ├── server.ts            # Servidor principal
-├── server.js            # Versão JavaScript (gerada)
 ├── package.json         # Configurações e dependências
 ├── tsconfig.json        # Configuração TypeScript
-├── requisicoes.http     # Exemplos de requisições HTTP
+├── drizzle.config.ts    # Configuração Drizzle Kit
 └── README.md           # Este arquivo
 ```
 
@@ -110,13 +126,20 @@ interface Course {
 ```
 
 ## Scripts Disponíveis
-- `npm run dev` - Inicia o servidor em modo desenvolvimento com hot reload
+- `npm run dev` - Inicia o servidor em modo desenvolvimento com hot reload (mata processos existentes automaticamente)
+- `npm run dev:clean` - Versão mais robusta que aguarda mais tempo antes de reiniciar
 - `npm run build` - Compila o TypeScript para JavaScript
 - `npm start` - Executa o servidor TypeScript diretamente
 - `npm run start:prod` - Executa a versão compilada em produção
+- `npm run migrate` - Aplica migrações do banco SQLite
+- `npm run migrate:generate` - Gera novas migrações baseadas no schema
+- `npm run db:setup` - Configura o banco de dados (gera e aplica migrações)
+- `npm run db:reset` - Reseta o banco SQLite
+- `npm run db:check` - Verifica o status do banco SQLite
+- `npm run drizzle:studio` - Abre interface gráfica do Drizzle Studio
 
 ## Testando a API
-O projeto inclui um arquivo `requisicoes.http` com exemplos de requisições que podem ser usados com extensões como REST Client no VS Code.
+O projeto inclui um arquivo `src/requests/requisicoes.http` com exemplos de requisições que podem ser usados com extensões como REST Client no VS Code.
 
 ### Exemplos de uso:
 ```http
@@ -139,7 +162,8 @@ GET http://localhost:3333/courses/1
 - **Tipagem**: TypeScript com interfaces bem definidas
 - **Validação**: Validação básica de entrada nos endpoints
 - **Logging**: Sistema de logs configurado com pino-pretty
-- **UUID**: Geração automática de IDs únicos para novos cursos
+- **Banco de Dados**: SQLite com Drizzle ORM para desenvolvimento
+- **Migrações**: Sistema de migrações automáticas
 - **Error Handling**: Tratamento de erros com códigos HTTP apropriados
 
 ## Dicas de Desenvolvimento

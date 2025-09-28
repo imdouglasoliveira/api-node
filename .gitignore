@@ -101,3 +101,5 @@ Thumbs.db
 # Others
 */docs/*
 */docs
+*CLAUDE.md
+*.claude

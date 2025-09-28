@@ -10,7 +10,9 @@
     "moduleResolution": "nodenext",
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "outDir": "./dist",
+    "rootDir": "./"
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules"]

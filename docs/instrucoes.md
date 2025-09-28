@@ -24,6 +24,37 @@ npx tsc --init
 ```bash
 npm i pino-pretty
 ````
+8. Instalar o Drizzle:
+```bash
+npm i drizzle-kit -D // -D: para setar que é dependencia de desenvolvimento
+npm i drizzle-orm pg
+````
+8. Instalar o dotenv:
+```bash
+npm install dotenv
+````
+
+# Drizzle
+1. Criar sql das tables do arquivo `schema.ts`:
+```bash
+npm run migrate:generate
+````
+2. Aplicar migrações (usar comando personalizado):
+```bash
+npm run migrate
+````
+3. Comandos úteis adicionais:
+```bash
+npm run db:setup  # Gerar e aplicar migrações em sequência
+npm run db:reset  # Reiniciar banco e aplicar migrações
+npm run db:check  # Verificar status do banco de dados
+````
+4. Abrir o studio do Drizzle:
+```bash
+npx drizzle-kit studio
+````
+
+> **⚠️ IMPORTANTE:** O comando `npx drizzle-kit migrate` apresenta problemas no Windows com Docker. Use os comandos NPM acima. Veja [Guia de Migrações](./migracoes-drizzle.md) para detalhes.
 
 # Gerenciamento de versões Node.js com nvm
 4. Ver versões instaladas do Node.js:
@@ -46,3 +77,22 @@ nvm use
 ```bash
 nvm alias default 20.12.2
 ````
+
+# Docker
+# Construir e executar
+docker-compose up --build
+
+# Executar em background
+## Rodar sem manter o terminal aberto
+docker-compose up -d --build
+
+# Visualizar os serviços
+docker-compose ps
+
+# Parar os serviços
+docker-compose down
+
+# Conecte ao PostgreSQL e verifique se o banco existe:
+```bash
+docker exec -it <container_id> psql -U postgres -c "\l"
+```

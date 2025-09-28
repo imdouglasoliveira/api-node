@@ -61,12 +61,11 @@ Lista todos os cursos disponíveis.
 **Resposta:**
 ```json
 {
-  "courses": [
-    { "id": "1", "name": "Curso de Node.js" },
-    { "id": "2", "name": "Curso de React" }
+  "result": [
+    { "id": 1, "title": "Curso de Node.js", "created_at": "2024-01-01T00:00:00.000Z", "updated_at": "2024-01-01T00:00:00.000Z" },
+    { "id": 2, "title": "Curso de React", "created_at": "2024-01-01T00:00:00.000Z", "updated_at": "2024-01-01T00:00:00.000Z" }
   ],
-  "page": 1,
-  "total": 10
+  "total": 2
 }
 ```
 
@@ -74,14 +73,16 @@ Lista todos os cursos disponíveis.
 Busca um curso específico pelo ID.
 
 **Parâmetros:**
-- `id` (string) - ID do curso
+- `id` (number) - ID do curso
 
 **Respostas:**
-- **200**: `{ "course": { "id": "1", "name": "Curso de Node.js" } }`
-- **404**: `{ "error": "Curso não encontrado" }`
+- **200**: `{ "course": { "id": 1, "title": "Curso de Node.js", "created_at": "2024-01-01T00:00:00.000Z", "updated_at": "2024-01-01T00:00:00.000Z" } }`
+- **404**: Curso não encontrado
 
 ### POST `/courses`
-Cria um novo curso.
+Cria um novo curso ou múltiplos cursos.
+
+**Para criar um curso:**
 
 **Body (JSON):**
 ```json
@@ -91,8 +92,24 @@ Cria um novo curso.
 ```
 
 **Respostas:**
-- **201**: `{ "id": "<uuid>", "name": "Nome do Curso" }`
+- **201**: `{ "courseId": 1 }`
 - **400**: `{ "error": "Nome do curso é obrigatório" }`
+
+**Para criar múltiplos cursos:**
+
+**Body (JSON Array):**
+```json
+[
+  { "title": "Curso de TypeScript" },
+  { "title": "Curso de Docker" },
+  { "title": "Curso de PostgreSQL" }
+]
+```
+
+**Respostas:**
+- **201**: `{ "courses": [{ "id": 1, "title": "Curso de TypeScript" }, { "id": 2, "title": "Curso de Docker" }], "total": 2 }`
+- **400**: `{ "error": "Array de cursos não pode estar vazio" }` ou `{ "error": "Todos os cursos devem ter um título" }`
+- **500**: `{ "error": "Erro ao criar cursos" }`
 
 ## Estrutura do Projeto
 ```
@@ -120,8 +137,11 @@ api-node/
 ### Course
 ```typescript
 interface Course {
-  id: string    // UUID único
-  name: string  // Nome do curso
+  id: number           // ID único (auto-incremento)
+  title: string        // Título do curso
+  description: string   // Descrição do curso (opcional)
+  created_at: Date     // Data de criação
+  updated_at: Date     // Data de atualização
 }
 ```
 
@@ -150,6 +170,18 @@ Content-Type: application/json
 {
   "title": "Curso de TypeScript"
 }
+
+# Criar múltiplos cursos
+POST http://localhost:3333/courses
+Content-Type: application/json
+
+[
+  { "title": "TypeScript" },
+  { "title": "Docker" },
+  { "title": "PostgreSQL" },
+  { "title": "Next.js" },
+  { "title": "Go" }
+]
 
 # Listar todos os cursos
 GET http://localhost:3333/courses

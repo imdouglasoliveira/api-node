@@ -46,3 +46,13 @@ nvm use
 ```bash
 nvm alias default 20.12.2
 ````
+
+# Docker
+# Construir e executar
+docker-compose up --build
+
+# Executar em background
+docker-compose up -d --build
+
+# Parar os serviços
+docker-compose down

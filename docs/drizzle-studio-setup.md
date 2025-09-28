@@ -1,88 +1,31 @@
-# Configuração do Banco PostgreSQL
+# Configuração do Drizzle Studio + SQLite
 
-Este documento explica a configuração do ambiente PostgreSQL para desenvolvimento local.
+Este documento explica como configurar e usar o Drizzle Studio com SQLite para desenvolvimento local.
 
-**Nota:** O Drizzle Studio apresenta problemas de compatibilidade com PostgreSQL 17 em containers Docker. Para gerenciamento visual do banco, recomenda-se usar ferramentas como pgAdmin, DBeaver ou similar.
+## ✅ Solução SQLite Implementada
 
-## Problema Identificado
+Com SQLite não há problemas de conectividade! O Drizzle Studio funciona perfeitamente com o banco local.
 
-O Drizzle Studio apresentava erro de autenticação ao tentar conectar com o banco PostgreSQL:
-
-```
-Error: autenticação do tipo senha falhou para o usuário "postgres"
-```
-
-## Causa do Problema
-
-O problema estava na configuração de autenticação do PostgreSQL no container Docker. O arquivo `pg_hba.conf` gerado automaticamente tinha configurações conflitantes:
-
-1. **Configurações locais**: Permitiam conexões `trust` (sem senha) para `127.0.0.1/32`
-2. **Configuração global**: A última linha `host all all all scram-sha-256` sobrescrevia as configurações anteriores, forçando autenticação por senha para todas as conexões
-
-## Solução Implementada
-
-### 1. Configuração do Docker Compose
-
-Adicionamos a variável de ambiente `POSTGRES_HOST_AUTH_METHOD=md5` no `docker-compose.yml`:
-
-```yaml
-services:
-  db:
-    image: postgres:17
-    environment:
-      - POSTGRES_DB=api_node
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=senha123
-      - POSTGRES_HOST_AUTH_METHOD=md5  # ← Linha adicionada
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
-```
-
-### 2. Simplificação da Senha
-
-Mudamos a senha de `Senh4_123` para `senha123` para evitar problemas de encoding com caracteres especiais.
-
-**Arquivos alterados:**
-- `docker-compose.yml`: `POSTGRES_PASSWORD=senha123`
-- `.env`: `DATABASE_URL=postgresql://postgres:senha123@127.0.0.1:5432/api_node`
-
-### 3. Recriação Completa do Banco
-
-```bash
-# Parar containers
-docker compose down
-
-# Remover volume antigo
-docker volume rm api-node_postgres_data
-
-# Recriar com nova configuração
-docker compose up -d
-
-# Aplicar migrações
-npm run migrate
-```
+### Vantagens do SQLite + Drizzle Studio:
+- ✅ **Sem Docker**: Não precisa de containers
+- ✅ **Zero Configuração**: Funciona out-of-the-box
+- ✅ **Performance**: Mais rápido para desenvolvimento
+- ✅ **Compatibilidade**: Funciona perfeitamente no Windows
+- ✅ **Interface Gráfica**: Drizzle Studio funciona perfeitamente
 
 ## Como Iniciar o Drizzle Studio
 
-### ✅ Método Recomendado (Automatizado):
+### ✅ Método Recomendado:
 
-1. **Certifique-se que o banco está rodando:**
+1. **Certifique-se que o banco está configurado:**
    ```bash
-   docker compose up -d
+   npm run db:check
    ```
 
-2. **Inicie o Drizzle Studio com script automatizado:**
+2. **Inicie o Drizzle Studio:**
    ```bash
-   npm run studio
+   npm run drizzle:studio
    ```
-
-   Este comando:
-   - ✅ Mata automaticamente qualquer processo anterior na porta 4983
-   - ✅ Inicia o Drizzle Studio sem conflitos de porta
-   - ✅ Mostra logs detalhados do processo
 
 3. **Acesse no navegador:**
    ```
@@ -92,33 +35,19 @@ npm run migrate
 4. **Para parar o Studio:**
    Pressione `Ctrl+C` no terminal
 
-### 🔧 Método Manual (Caso necessário):
-
-Se preferir usar o comando original:
-
-1. **Mate processos anteriores (se necessário):**
-   ```bash
-   npm run studio:kill
-   ```
-
-2. **Inicie o Drizzle Studio:**
-   ```bash
-   npx drizzle-kit studio
-   ```
-
-## Scripts Úteis
+## Scripts Disponíveis
 
 O projeto possui scripts configurados no `package.json`:
 
 ```json
 {
   "scripts": {
-    "studio": "node src/scripts/drizzle/start-studio.js",
-    "studio:kill": "node src/scripts/drizzle/kill-studio-port.js",
+    "drizzle:studio": "npx drizzle-kit studio",
     "migrate:generate": "npx drizzle-kit generate",
     "migrate": "node src/scripts/apply-migration.js",
     "db:setup": "npm run migrate:generate && npm run migrate",
-    "db:reset": "docker compose down && docker compose up -d && npm run migrate"
+    "db:reset": "powershell \"Remove-Item -Force dev.db -ErrorAction SilentlyContinue\" && npm run migrate",
+    "db:check": "node src/scripts/check-db.js"
   }
 }
 ```
@@ -126,38 +55,16 @@ O projeto possui scripts configurados no `package.json`:
 ### Comandos Úteis:
 
 #### 🎯 Drizzle Studio:
-- **Iniciar Studio (automatizado):** `npm run studio`
-- **Matar processos do Studio:** `npm run studio:kill`
+- **Iniciar Studio:** `npm run drizzle:studio`
 
-#### 🗄️ Banco de Dados:
-- **Reset completo do banco:** `npm run db:reset`
+#### 🗄️ Banco de Dados SQLite:
+- **Verificar status:** `npm run db:check`
+- **Reset completo:** `npm run db:reset`
 - **Gerar migrações:** `npm run migrate:generate`
 - **Aplicar migrações:** `npm run migrate`
 - **Setup inicial:** `npm run db:setup`
 
-## Configuração Final
-
-### docker-compose.yml
-```yaml
-services:
-  db:
-    image: postgres:17
-    environment:
-      - POSTGRES_DB=api_node
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=senha123
-      - POSTGRES_HOST_AUTH_METHOD=md5
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
-```
-
-### .env
-```
-DATABASE_URL=postgresql://postgres:senha123@127.0.0.1:5432/api_node
-```
+## Configuração Atual
 
 ### drizzle.config.ts
 ```typescript
@@ -166,95 +73,101 @@ config();
 
 import { defineConfig } from 'drizzle-kit';
 
-if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not set');
-}
-
 export default defineConfig({
-    dialect: 'postgresql',
-    dbCredentials: {
-        url: process.env.DATABASE_URL,
-    },
-    out: './drizzle',
+    dialect: 'sqlite',
     schema: './src/database/schema.ts',
+    out: './drizzle',
+    dbCredentials: {
+        url: './dev.db',
+    }
 });
 ```
 
+### Banco SQLite
+- **Arquivo:** `./dev.db`
+- **Tipo:** SQLite 3
+- **Localização:** Raiz do projeto
+- **Status:** Funcionando perfeitamente
+
+## Funcionalidades do Drizzle Studio
+
+Com SQLite, o Drizzle Studio oferece:
+
+- ✅ **Visualização de tabelas** e dados
+- ✅ **Adicionar novos registros** diretamente na interface
+- ✅ **Editar registros existentes**
+- ✅ **Executar queries** diretamente na interface
+- ✅ **Navegar pelo schema** do banco de dados
+- ✅ **Interface responsiva** e intuitiva
+
 ## Troubleshooting
 
-### Se o erro persistir:
+### Problemas Comuns
 
-1. **Verifique se o container está rodando:**
+1. **Arquivo dev.db não encontrado:**
    ```bash
-   docker ps
+   npm run migrate
    ```
 
-2. **Verifique os logs do PostgreSQL:**
+2. **Banco corrompido:**
    ```bash
-   docker logs api-node-db-1
+   npm run db:reset
    ```
 
-3. **Teste a conexão diretamente:**
+3. **Verificar status:**
    ```bash
-   docker exec api-node-db-1 psql -U postgres -d api_node -c "SELECT 1;"
+   npm run db:check
    ```
 
-4. **Use o script automatizado para matar processos:**
-   ```bash
-   npm run studio:kill
-   ```
+4. **Porta ocupada (raro com SQLite):**
+   - Pressione `Ctrl+C` para parar o Studio
+   - Aguarde alguns segundos
+   - Execute `npm run drizzle:studio` novamente
 
-5. **Método manual (se necessário):**
-   ```bash
-   # Encontrar processo na porta 4983
-   netstat -ano | findstr :4983
+### Verificação de Status
 
-   # Matar processo (substitua PID pelo número encontrado)
-   powershell "Stop-Process -Id PID -Force"
-   ```
-
-### Dicas Importantes:
-
-- **Senhas**: Use senhas simples sem caracteres especiais para evitar problemas de URL encoding
-- **Reset completo**: Sempre que alterar credenciais, execute `npm run db:reset`
-- **Porta ocupada**: Se der erro de porta em uso, mate o processo anterior do Drizzle Studio
-- **Aguarde inicialização**: Após `docker compose up -d`, aguarde alguns segundos antes de aplicar migrações
-
-## Scripts Automatizados Criados
-
-Para resolver definitivamente o problema de porta ocupada, foram criados scripts especializados:
-
-### `src/scripts/drizzle/kill-studio-port.js`
-Script que:
-- ✅ Verifica processos na porta 4983
-- ✅ Mata automaticamente qualquer processo encontrado
-- ✅ Fornece feedback detalhado das ações executadas
-- ✅ Funciona tanto no Windows quanto em sistemas Unix
-
-### `src/scripts/drizzle/start-studio.js`
-Script integrado que:
-- ✅ Executa primeiro o kill-studio-port.js
-- ✅ Inicia o Drizzle Studio sem conflitos
-- ✅ Manuseia sinais (Ctrl+C) corretamente
-- ✅ Fornece logs informativos do processo
-
-### Comandos Disponíveis:
 ```bash
-# Comando principal - use sempre este
-npm run studio
+# Verificar status do banco
+npm run db:check
 
-# Comando auxiliar - mata apenas os processos
-npm run studio:kill
+# Verificar se o arquivo dev.db existe
+ls dev.db  # Linux/Mac
+dir dev.db # Windows
 ```
+
+## Vantagens da Solução SQLite
+
+- ✅ **Funciona perfeitamente** no Windows
+- ✅ **Sem Docker** necessário
+- ✅ **Drizzle Studio** funciona sem problemas
+- ✅ **Performance** superior para desenvolvimento
+- ✅ **Zero configuração** de rede
+- ✅ **Arquivo único** fácil de versionar
+- ✅ **Compatibilidade** total com Drizzle ORM
+
+## Migração para Produção
+
+Quando necessário migrar para PostgreSQL em produção:
+
+1. **Manter schema** compatível entre SQLite e PostgreSQL
+2. **Usar Drizzle ORM** que abstrai as diferenças
+3. **Configurar** `drizzle.config.ts` para PostgreSQL
+4. **Aplicar migrações** no ambiente de produção
 
 ## Resultado
 
 Após seguir estes passos, o Drizzle Studio funcionará corretamente em `https://local.drizzle.studio`, permitindo:
 
-- Visualizar tabelas e dados
+- Visualizar tabelas e dados do SQLite
 - Adicionar novos registros
 - Editar registros existentes
 - Executar queries diretamente na interface
 - Navegar pelo schema do banco de dados
 
-**O comando `npm run studio` agora resolve automaticamente qualquer conflito de porta e garante que o Studio inicie corretamente em todas as vezes!**
+**O comando `npm run drizzle:studio` funciona perfeitamente com SQLite e não apresenta problemas de conectividade!**
+
+---
+
+**Última atualização:** 28/09/2025  
+**Status:** ✅ Funcionando perfeitamente  
+**Banco:** SQLite 3.50.4

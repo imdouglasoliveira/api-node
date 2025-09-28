@@ -2,59 +2,71 @@
 1. Para criar o arquivo package inicial usamos:
 ```bash
 npm init -y
-````
-2. Instalar o fastity usando:
+```
+
+2. Instalar o Fastify:
 ```bash
 npm i fastify
-````
+```
+
 3. Rodar as alterações em tempo real:
 ```bash
-node --watch server.js
-````
-4. Instalar o typescript:
+npm run dev
+```
+
+4. Instalar o TypeScript:
 ```bash
 npm i typescript @types/node -D
-````
-5. Iniciar o typescript:
+```
+
+5. Iniciar o TypeScript:
 ```bash
 npx tsc --init
-````
+```
+
 6. Acessar o repositório [tsconfig/bases](https://github.com/tsconfig/bases?tab=readme-ov-file#node-22-tsconfigjson) e clicar em `tsconfig.json`, copiar o valor e substituir no arquivo de tsconfig.
+
 7. Instalar o pino para logger:
 ```bash
 npm i pino-pretty
-````
-8. Instalar o Drizzle:
+```
+
+8. Instalar o Drizzle e SQLite:
 ```bash
-npm i drizzle-kit -D // -D: para setar que é dependencia de desenvolvimento
-npm i drizzle-orm pg
-````
-8. Instalar o dotenv:
+npm i drizzle-kit -D  # Dependência de desenvolvimento
+npm i drizzle-orm better-sqlite3
+npm i @types/better-sqlite3 -D
+```
+
+9. Instalar o dotenv:
 ```bash
 npm install dotenv
-````
+```
 
-# Drizzle
-1. Criar sql das tables do arquivo `schema.ts`:
+# Drizzle + SQLite
+1. Criar SQL das tabelas do arquivo `schema.ts`:
 ```bash
 npm run migrate:generate
-````
-2. Aplicar migrações (usar comando personalizado):
+```
+
+2. Aplicar migrações:
 ```bash
 npm run migrate
-````
+```
+
 3. Comandos úteis adicionais:
 ```bash
-npm run db:setup  # Gerar e aplicar migrações em sequência
-npm run db:reset  # Reiniciar banco e aplicar migrações
-npm run db:check  # Verificar status do banco de dados
-````
-4. Abrir o studio do Drizzle:
-```bash
-npx drizzle-kit studio
-````
+npm run db:setup      # Gerar e aplicar migrações em sequência
+npm run db:reset      # Resetar banco e aplicar migrações
+npm run db:check      # Verificar status do banco de dados
+```
 
-> **⚠️ IMPORTANTE:** O comando `npx drizzle-kit migrate` apresenta problemas no Windows com Docker. Use os comandos NPM acima. Veja [Guia de Migrações](./migracoes-drizzle.md) para detalhes.
+4. Abrir o Drizzle Studio:
+```bash
+npm run drizzle:studio
+```
+
+> **✅ VANTAGEM:** Com SQLite não há problemas de conectividade no Windows. Tudo funciona perfeitamente!
 
 # Gerenciamento de versões Node.js com nvm
 4. Ver versões instaladas do Node.js:
@@ -78,21 +90,24 @@ nvm use
 nvm alias default 20.12.2
 ````
 
-# Docker
-# Construir e executar
-docker-compose up --build
+# SQLite - Banco de Dados Local
+Com SQLite não precisamos de Docker! O banco é um arquivo local `dev.db`.
 
-# Executar em background
-## Rodar sem manter o terminal aberto
-docker-compose up -d --build
+## Vantagens do SQLite:
+- ✅ **Simplicidade**: Sem necessidade de Docker
+- ✅ **Performance**: Mais rápido para desenvolvimento
+- ✅ **Compatibilidade**: Funciona perfeitamente no Windows
+- ✅ **Portabilidade**: Arquivo único `dev.db`
+- ✅ **Zero Configuração**: Funciona out-of-the-box
 
-# Visualizar os serviços
-docker-compose ps
-
-# Parar os serviços
-docker-compose down
-
-# Conecte ao PostgreSQL e verifique se o banco existe:
+## Comandos SQLite:
 ```bash
-docker exec -it <container_id> psql -U postgres -c "\l"
+# Verificar status do banco
+npm run db:check
+
+# Resetar banco (remove e recria)
+npm run db:reset
+
+# Abrir Drizzle Studio para visualizar dados
+npm run drizzle:studio
 ```

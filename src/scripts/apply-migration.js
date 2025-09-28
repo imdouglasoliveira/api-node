@@ -1,22 +1,26 @@
-import { execSync } from 'child_process';
+import { drizzle } from 'drizzle-orm/better-sqlite3';
+import Database from 'better-sqlite3';
 import fs from 'fs';
 import path from 'path';
 
-// Função para aplicar migrações via Docker
+// Função para aplicar migrações SQLite
 function applyMigration(migrationFile) {
     console.log(`📦 Aplicando migração: ${migrationFile}`);
     
     try {
-        // Copiar arquivo para o container
-        execSync(`docker cp ${migrationFile} api-node-db-1:/tmp/migration.sql`);
+        // Ler arquivo de migração
+        const migrationSQL = fs.readFileSync(migrationFile, 'utf8');
+        
+        // Conectar ao banco SQLite
+        const sqlite = new Database('./src/database/dev.db');
+        const db = drizzle(sqlite);
         
         // Executar migração
-        const result = execSync('docker exec api-node-db-1 psql -U postgres -d api_node -f /tmp/migration.sql', {
-            encoding: 'utf8'
-        });
+        sqlite.exec(migrationSQL);
         
         console.log('✅ Migração aplicada com sucesso!');
-        console.log(result);
+        
+        sqlite.close();
         
     } catch (error) {
         console.error('❌ Erro ao aplicar migração:', error.message);

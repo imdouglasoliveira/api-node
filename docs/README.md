@@ -8,20 +8,25 @@ Esta pasta contém toda a documentação técnica do projeto.
 - Configuração inicial do projeto
 - Instalação de dependências
 - Comandos básicos de desenvolvimento
-- Configuração do Docker
+- Configuração do SQLite
 - Gerenciamento de versões Node.js
 
 ### [Guia de Migrações do Drizzle](./migracoes-drizzle.md)
-- **⚠️ LEIA PRIMEIRO** - Problema com migrações no Windows
-- Solução implementada para migrações
-- Comandos alternativos
+- Sistema de migrações SQLite
+- Comandos de migração
 - Troubleshooting
 - Configuração atual do banco
+
+### [Drizzle Studio Setup](./drizzle-studio-setup.md)
+- Configuração do Drizzle Studio
+- Visualização do banco SQLite
+- Interface gráfica para desenvolvimento
 
 ## 🚀 Início Rápido
 
 1. **Configuração inicial:** Veja [instrucoes.md](./instrucoes.md)
-2. **Problemas com migrações:** Veja [migracoes-drizzle.md](./migracoes-drizzle.md)
+2. **Migrações:** Veja [migracoes-drizzle.md](./migracoes-drizzle.md)
+3. **Drizzle Studio:** Veja [drizzle-studio-setup.md](./drizzle-studio-setup.md)
 
 ## 📝 Comandos Essenciais
 
@@ -29,30 +34,35 @@ Esta pasta contém toda a documentação técnica do projeto.
 # Desenvolvimento
 npm run dev
 
-# Migrações
+# Migrações SQLite
 npm run migrate:generate  # Gerar migração
 npm run migrate          # Aplicar migração
 npm run db:setup         # Gerar e aplicar migrações
-npm run db:reset         # Reiniciar banco e aplicar migrações
+npm run db:reset         # Resetar banco e aplicar migrações
 npm run db:check         # Verificar status do banco
 
-# Docker
-docker compose up -d     # Iniciar banco
-docker compose down      # Parar banco
+# Drizzle Studio
+npm run drizzle:studio   # Abrir interface gráfica
+
+# Testes
+# Use o arquivo src/requests/requisicoes.http com REST Client
 ```
 
-## ⚠️ Problemas Conhecidos
+## ✅ Vantagens do SQLite
 
-- **Migrações do Drizzle:** Use `npm run migrate` em vez de `npx drizzle-kit migrate`
-- **Conectividade Windows-Docker:** Solução implementada nos scripts NPM
+- **Simplicidade**: Sem necessidade de Docker
+- **Performance**: Mais rápido para desenvolvimento
+- **Compatibilidade**: Funciona perfeitamente no Windows
+- **Portabilidade**: Arquivo único `dev.db`
+- **Zero Configuração**: Funciona out-of-the-box
 
 ## 📞 Suporte
 
 Se encontrar problemas:
 1. Verifique a documentação específica
-2. Execute os comandos de troubleshooting
-3. Verifique se o Docker está rodando
-4. Consulte os logs do container
+2. Execute `npm run db:check` para verificar o banco
+3. Execute `npm run db:reset` para resetar o banco
+4. Consulte os logs do servidor
 
 ---
 

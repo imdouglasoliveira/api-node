@@ -102,4 +102,7 @@ Thumbs.db
 */docs/*
 */docs
 *CLAUDE.md
-*.claude
+*/.claude
+*/.claude/*
+*.claude/
+*.claude/*

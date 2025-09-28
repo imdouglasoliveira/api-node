@@ -126,7 +126,8 @@ interface Course {
 ```
 
 ## Scripts Disponíveis
-- `npm run dev` - Inicia o servidor em modo desenvolvimento com hot reload
+- `npm run dev` - Inicia o servidor em modo desenvolvimento com hot reload (mata processos existentes automaticamente)
+- `npm run dev:clean` - Versão mais robusta que aguarda mais tempo antes de reiniciar
 - `npm run build` - Compila o TypeScript para JavaScript
 - `npm start` - Executa o servidor TypeScript diretamente
 - `npm run start:prod` - Executa a versão compilada em produção

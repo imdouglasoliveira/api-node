@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "tsx server.ts",
-    "dev": "tsx --watch server.ts",
+    "dev": "powershell \"taskkill /F /IM node.exe 2>$null; Start-Sleep 1; tsx --watch server.ts\"",
+    "dev:clean": "powershell \"taskkill /F /IM node.exe 2>$null; Start-Sleep 2; tsx --watch server.ts\"",
     "build": "tsc",
     "start:prod": "node dist/server.js",
     "migrate": "node src/scripts/apply-migration.js",

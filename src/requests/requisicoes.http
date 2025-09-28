@@ -3,8 +3,31 @@ POST http://localhost:3333/courses HTTP/1.1
 Content-Type: application/json
 
 {
-  "title": "Curso de React"
+  "title": "TypeScript",
+  "title": "Docker",
+  "title": "PostgreSQL",
+  "title": "Next.js",
+  "title": "Go",
+  "title": "Engenharia de Prompt",
+  "title": "Python",
+  "title": "Git"
 }
+
+###
+# Post para criar vários cursos
+POST http://localhost:3333/courses HTTP/1.1
+Content-Type: application/json
+
+[
+  { "title": "TypeScript" },
+  { "title": "Docker" },
+  { "title": "PostgreSQL" },
+  { "title": "Next.js" },
+  { "title": "Go" },
+  { "title": "Engenharia de Prompt" },
+  { "title": "Python" },
+  { "title": "Git" }
+]
 
 ###
 # Get para buscar todos os cursos

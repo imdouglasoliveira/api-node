@@ -148,7 +148,7 @@ function main() {
     log('   Para fazer deploy completo: npm run deploy', 'cyan');
 }
 
-// Executar sempre (para debug)
+// Executar sempre
 main();
 
 export { main as pushDev };

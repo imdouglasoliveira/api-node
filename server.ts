@@ -1,7 +1,8 @@
 import { config } from 'dotenv'
 import { eq } from 'drizzle-orm'
 import fastify from 'fastify'
-import { validatorCompiler, serializerCompiler } from 'fastify-type-provider-zod'
+import { validatorCompiler, serializerCompiler, type ZodTypeProvider } from 'fastify-type-provider-zod'
+import { z } from 'zod'
 import { db } from './src/database/client.js'
 import { courses } from './src/database/schema.js'
 
@@ -20,28 +21,12 @@ async function startServer() {
                 }
             }
         }
-    })
+    }).withTypeProvider<ZodTypeProvider>()    
     server.setValidatorCompiler(validatorCompiler)
     server.setSerializerCompiler(serializerCompiler)
 
-    // Registrar plugin para parsing de JSON
+    // Usado para parsing de JSON
     await server.register(import('@fastify/formbody'))
-
-    // Definir interfaces
-    interface Course {
-        id: number
-        title: string
-        created_at: Date
-        updated_at: Date
-    }
-
-    interface CreateCourseRequest {
-        title: string
-    }
-
-    interface CreateCoursesRequest extends Array<{
-        title: string
-    }> {}
 
     // GET /courses - Listar todos os cursos
     server.get('/courses', async (request, reply) => {
@@ -56,11 +41,14 @@ async function startServer() {
     })
 
     // GET /courses/:id - Buscar um curso específico
-    server.get('/courses/:id', async (request, reply) => {
-        const courseId = parseInt((request.params as { id: string }).id)
-        if (isNaN(courseId)) {
-            return reply.status(400).send({ error: 'ID do curso inválido' })
+    server.get('/courses/:id', {
+        schema: {
+            params: z.object({
+                id: z.string().regex(/^\d+$/, 'ID do curso deve ser um número')
+            })
         }
+    }, async (request, reply) => {
+        const courseId = parseInt(request.params.id)
 
         const result = await db.select({
             id: courses.id,
@@ -78,25 +66,25 @@ async function startServer() {
         return reply.status(404).send({ error: 'Curso não encontrado' })
     })
 
-    // POST /courses - Criar um novo curso ou vários cursos
-    server.post<{ Body: CreateCourseRequest } | { Body: CreateCoursesRequest }>('/courses', async (request, reply) => {
+    // POST /courses - Criar UM novo curso ou VÁRIOS
+    server.post('/courses', {
+        schema: {
+            body: z.union([
+                // Para um único curso
+                z.object({
+                    title: z.string().min(1, 'Título é obrigatório').max(100, 'Título muito longo')
+                }),
+                // Para múltiplos cursos
+                z.array(z.object({
+                    title: z.string().min(1, 'Título é obrigatório').max(100, 'Título muito longo')
+                })).min(1, 'Array não pode estar vazio').max(50, 'Máximo 50 cursos por vez')
+            ])
+        }
+    }, async (request, reply) => {
         const body = request.body
 
         if (Array.isArray(body)) {
             try {
-                // Verificar se o array não está vazio
-                if (body.length === 0) {
-                    return reply.status(400).send({ error: 'Array de cursos não pode estar vazio' })
-                }
-
-                // Verificar se cada item tem title
-                for (const course of body) {
-                    if (!course.title) {
-                        return reply.status(400).send({ error: 'Todos os cursos devem ter um título' })
-                    }
-                }
-
-                // Mapear o array para o formato correto do banco
                 const coursesToInsert = body.map(course => ({
                     title: course.title,
                     description: null
@@ -108,13 +96,16 @@ async function startServer() {
                     .values(coursesToInsert)
                     .returning()
 
-                // Retornar array de dos cursos criados, ID e Title
+                // Retornar resposta padronizada
                 return reply.status(201).send({
-                    courses: result.map((course) => ({
-                        id: course.id,
-                        title: course.title
-                    })),
-                    total: result.length
+                    success: true,
+                    data: {
+                        courses: result.map((course) => ({
+                            id: course.id,
+                            title: course.title
+                        })),
+                        total: result.length
+                    }
                 })
             } catch (error) {
                 console.error('Erro ao criar cursos:', error)
@@ -122,22 +113,19 @@ async function startServer() {
             }
 
         } else {
-            // Pegar o nome do curso do corpo da requisição
-            const courseTitle = (request.body as CreateCourseRequest).title
-            if (!courseTitle) {
-                return reply.status(400).send({ error: 'Nome do curso é obrigatório' })
-            }
-
-            // Inserir o novo curso no banco de dados
+            // Criar um único curso
             const result = await db
                 .insert(courses)
                 .values({
-                    title: courseTitle,
+                    title: body.title,
                     description: null
                 })
                 .returning()
 
-            return reply.status(201).send({ courseId: result[0].id })
+            return reply.status(201).send({ 
+                success: true,
+                data: { courseId: result[0].id }
+            })
         }
     })
     await server.listen({ port: 3333 }).then(() => {

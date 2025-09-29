@@ -103,9 +103,7 @@ function main() {
     }
 }
 
-// Executar apenas se chamado diretamente
-if (import.meta.url === `file://${process.argv[1]}`) {
-    main();
-}
+// Executar sempre
+main();
 
 export { main, deploy, pushDev, status, cleanup };

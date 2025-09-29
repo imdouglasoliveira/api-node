@@ -148,9 +148,7 @@ function main() {
     log('   Para fazer deploy completo: npm run deploy', 'cyan');
 }
 
-// Executar apenas se chamado diretamente
-if (import.meta.url === `file://${process.argv[1]}`) {
-    main();
-}
+// Executar sempre (para debug)
+main();
 
 export { main as pushDev };

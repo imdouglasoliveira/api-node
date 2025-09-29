@@ -118,7 +118,9 @@ function main() {
     }
 }
 
-// Executar sempre
-main();
+// Executar apenas se chamado diretamente
+if (import.meta.url === `file://${process.argv[1]}` || import.meta.url.endsWith(process.argv[1])) {
+    main();
+}
 
 export { main, migrate, check };

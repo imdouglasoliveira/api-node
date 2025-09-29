@@ -132,9 +132,7 @@ function main() {
     log('   Branch main: https://github.com/imdouglasoliveira/api-node/tree/main', 'cyan');
 }
 
-// Executar apenas se chamado diretamente
-if (import.meta.url === `file://${process.argv[1]}`) {
-    main();
-}
+// Executar sempre
+main();
 
 export { main as deploy };

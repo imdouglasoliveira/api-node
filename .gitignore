@@ -98,11 +98,9 @@ Thumbs.db
 # TypeScript
 *.tsbuildinfo
 
-# Others
-*/docs/*
-*/docs
-*CLAUDE.md
-*/.claude
-*/.claude/*
-*.claude/
-*.claude/*
+# Documentação local (não versionar)
+docs/
+docs/*
+CLAUDE.md
+.claude/
+.claude/*

@@ -3,7 +3,7 @@
 API simples em Node.js + TypeScript usando Fastify para gerenciamento de cursos. Projeto desenvolvido para fins de estudo e aprendizado.
 
 ## Requisitos
-- Node.js 22+
+- Node.js 20.12.2+ (recomendado usar .nvmrc)
 - npm (ou outro gerenciador de pacotes)
 
 ## Tecnologias
@@ -114,7 +114,11 @@ Cria um novo curso ou múltiplos cursos.
 ## Estrutura do Projeto
 ```
 api-node/
-├── docs/                 # Documentação do projeto
+├── docs/                 # Documentação técnica (local)
+│   ├── README.md         # Visão geral da documentação
+│   ├── instrucoes.md     # Instruções de setup
+│   ├── migracoes-drizzle.md  # Guia de migrações
+│   └── drizzle-studio-setup.md  # Configuração do Studio
 ├── drizzle/              # Migrações do banco de dados
 ├── src/
 │   ├── database/         # Schema e cliente do banco
@@ -126,12 +130,16 @@ api-node/
 │   └── scripts/          # Scripts utilitários
 │       ├── apply-migration.js  # Aplicar migrações
 │       └── check-db.js          # Verificar banco
+├── .claude/              # Configurações Claude (local)
 ├── server.ts            # Servidor principal
+├── CLAUDE.md            # Documentação Claude (local)
 ├── package.json         # Configurações e dependências
 ├── tsconfig.json        # Configuração TypeScript
 ├── drizzle.config.ts    # Configuração Drizzle Kit
 └── README.md           # Este arquivo
 ```
+
+> **Nota:** Os diretórios `docs/`, `.claude/` e o arquivo `CLAUDE.md` são locais e não são versionados no Git.
 
 ## Modelos de Dados
 ### Course
@@ -198,11 +206,21 @@ GET http://localhost:3333/courses/1
 - **Migrações**: Sistema de migrações automáticas
 - **Error Handling**: Tratamento de erros com códigos HTTP apropriados
 
+## Documentação Técnica
+
+Para informações detalhadas sobre configuração e uso:
+
+- **[docs/README.md](./docs/README.md)** - Visão geral da documentação
+- **[docs/instrucoes.md](./docs/instrucoes.md)** - Instruções completas de setup
+- **[docs/migracoes-drizzle.md](./docs/migracoes-drizzle.md)** - Guia completo de migrações
+- **[docs/drizzle-studio-setup.md](./docs/drizzle-studio-setup.md)** - Configuração do Drizzle Studio
+
 ## Dicas de Desenvolvimento
 - Use `npm run dev` durante o desenvolvimento para ter hot reload
 - O servidor reinicia automaticamente quando arquivos são modificados
 - Logs são formatados de forma legível durante o desenvolvimento
 - Todos os endpoints retornam JSON
+- Consulte a documentação técnica na pasta `docs/` para informações detalhadas
 
 ## Licença
 ISC

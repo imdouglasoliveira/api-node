@@ -3,7 +3,7 @@
 API simples em Node.js + TypeScript usando Fastify para gerenciamento de cursos. Projeto desenvolvido para fins de estudo e aprendizado.
 
 ## Requisitos
-- Node.js 22+
+- Node.js 20.12.2+ (recomendado usar .nvmrc)
 - npm (ou outro gerenciador de pacotes)
 
 ## Tecnologias
@@ -61,12 +61,11 @@ Lista todos os cursos disponíveis.
 **Resposta:**
 ```json
 {
-  "courses": [
-    { "id": "1", "name": "Curso de Node.js" },
-    { "id": "2", "name": "Curso de React" }
+  "result": [
+    { "id": 1, "title": "Curso de Node.js", "created_at": "2024-01-01T00:00:00.000Z", "updated_at": "2024-01-01T00:00:00.000Z" },
+    { "id": 2, "title": "Curso de React", "created_at": "2024-01-01T00:00:00.000Z", "updated_at": "2024-01-01T00:00:00.000Z" }
   ],
-  "page": 1,
-  "total": 10
+  "total": 2
 }
 ```
 
@@ -74,14 +73,16 @@ Lista todos os cursos disponíveis.
 Busca um curso específico pelo ID.
 
 **Parâmetros:**
-- `id` (string) - ID do curso
+- `id` (number) - ID do curso
 
 **Respostas:**
-- **200**: `{ "course": { "id": "1", "name": "Curso de Node.js" } }`
-- **404**: `{ "error": "Curso não encontrado" }`
+- **200**: `{ "course": { "id": 1, "title": "Curso de Node.js", "created_at": "2024-01-01T00:00:00.000Z", "updated_at": "2024-01-01T00:00:00.000Z" } }`
+- **404**: Curso não encontrado
 
 ### POST `/courses`
-Cria um novo curso.
+Cria um novo curso ou múltiplos cursos.
+
+**Para criar um curso:**
 
 **Body (JSON):**
 ```json
@@ -91,13 +92,33 @@ Cria um novo curso.
 ```
 
 **Respostas:**
-- **201**: `{ "id": "<uuid>", "name": "Nome do Curso" }`
+- **201**: `{ "courseId": 1 }`
 - **400**: `{ "error": "Nome do curso é obrigatório" }`
+
+**Para criar múltiplos cursos:**
+
+**Body (JSON Array):**
+```json
+[
+  { "title": "Curso de TypeScript" },
+  { "title": "Curso de Docker" },
+  { "title": "Curso de PostgreSQL" }
+]
+```
+
+**Respostas:**
+- **201**: `{ "courses": [{ "id": 1, "title": "Curso de TypeScript" }, { "id": 2, "title": "Curso de Docker" }], "total": 2 }`
+- **400**: `{ "error": "Array de cursos não pode estar vazio" }` ou `{ "error": "Todos os cursos devem ter um título" }`
+- **500**: `{ "error": "Erro ao criar cursos" }`
 
 ## Estrutura do Projeto
 ```
 api-node/
-├── docs/                 # Documentação do projeto
+├── docs/                 # Documentação técnica (local)
+│   ├── README.md         # Visão geral da documentação
+│   ├── instrucoes.md     # Instruções de setup
+│   ├── migracoes-drizzle.md  # Guia de migrações
+│   └── drizzle-studio-setup.md  # Configuração do Studio
 ├── drizzle/              # Migrações do banco de dados
 ├── src/
 │   ├── database/         # Schema e cliente do banco
@@ -109,19 +130,26 @@ api-node/
 │   └── scripts/          # Scripts utilitários
 │       ├── apply-migration.js  # Aplicar migrações
 │       └── check-db.js          # Verificar banco
+├── .claude/              # Configurações Claude (local)
 ├── server.ts            # Servidor principal
+├── CLAUDE.md            # Documentação Claude (local)
 ├── package.json         # Configurações e dependências
 ├── tsconfig.json        # Configuração TypeScript
 ├── drizzle.config.ts    # Configuração Drizzle Kit
 └── README.md           # Este arquivo
 ```
 
+> **Nota:** Os diretórios `docs/`, `.claude/` e o arquivo `CLAUDE.md` são locais e não são versionados no Git.
+
 ## Modelos de Dados
 ### Course
 ```typescript
 interface Course {
-  id: string    // UUID único
-  name: string  // Nome do curso
+  id: number           // ID único (auto-incremento)
+  title: string        // Título do curso
+  description: string   // Descrição do curso (opcional)
+  created_at: Date     // Data de criação
+  updated_at: Date     // Data de atualização
 }
 ```
 
@@ -151,6 +179,18 @@ Content-Type: application/json
   "title": "Curso de TypeScript"
 }
 
+# Criar múltiplos cursos
+POST http://localhost:3333/courses
+Content-Type: application/json
+
+[
+  { "title": "TypeScript" },
+  { "title": "Docker" },
+  { "title": "PostgreSQL" },
+  { "title": "Next.js" },
+  { "title": "Go" }
+]
+
 # Listar todos os cursos
 GET http://localhost:3333/courses
 
@@ -166,11 +206,21 @@ GET http://localhost:3333/courses/1
 - **Migrações**: Sistema de migrações automáticas
 - **Error Handling**: Tratamento de erros com códigos HTTP apropriados
 
+## Documentação Técnica
+
+Para informações detalhadas sobre configuração e uso:
+
+- **[docs/README.md](./docs/README.md)** - Visão geral da documentação
+- **[docs/instrucoes.md](./docs/instrucoes.md)** - Instruções completas de setup
+- **[docs/migracoes-drizzle.md](./docs/migracoes-drizzle.md)** - Guia completo de migrações
+- **[docs/drizzle-studio-setup.md](./docs/drizzle-studio-setup.md)** - Configuração do Drizzle Studio
+
 ## Dicas de Desenvolvimento
 - Use `npm run dev` durante o desenvolvimento para ter hot reload
 - O servidor reinicia automaticamente quando arquivos são modificados
 - Logs são formatados de forma legível durante o desenvolvimento
 - Todos os endpoints retornam JSON
+- Consulte a documentação técnica na pasta `docs/` para informações detalhadas
 
 ## Licença
 ISC

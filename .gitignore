@@ -104,3 +104,7 @@ docs/*
 CLAUDE.md
 .claude/
 .claude/*
+.backup
+.backup/*
+/.backup
+*/.backup

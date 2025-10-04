@@ -28,9 +28,31 @@ NODE_ENV=development
 ```
 4. Configure o banco de dados SQLite:
 ```bash
+# Opção 1: Setup completo (gerar + aplicar migrações)
 npm run db:setup
+
+# Opção 2: Passo a passo
+npm run migrate:generate  # Gera arquivo SQL de migração
+npm run migrate          # Aplica migrações no banco
 ```
-(opcional) Para inspecionar o schema/estado com o Drizzle Studio:
+
+5. (Opcional) Popular banco de dados com dados de exemplo:
+```bash
+# Seed completo (usuários + cursos + matrículas)
+# Padrão: 5 usuários, 20 cursos, 3 matrículas por usuário
+npm run db:seed
+
+# Seed completo com quantidades customizadas
+npm run db:seed -- --users=10 --courses=8 --enrollments=4
+
+# Seeds individuais (caso prefira popular separadamente)
+npm run db:seed-users       # Padrão: 2 usuários
+npm run db:seed-users 10    # Criar 10 usuários
+npm run db:seed-courses     # Padrão: todos os 20 cursos
+npm run db:seed-courses 5   # Criar apenas 5 cursos
+```
+
+6. (Opcional) Para inspecionar o schema/estado com o Drizzle Studio:
 ```bash
 npm run drizzle:studio
 ```
@@ -113,13 +135,45 @@ Tabelas principais definidas em `src/database/schema.ts`:
   - `email` (text, único, obrigatório)
 
 ## Scripts
+
+### Desenvolvimento
 - `npm run dev`: inicia o servidor com reload e carrega variáveis de `.env`
+- `npm run drizzle:studio`: abre o Drizzle Studio
+
+### Migrações
 - `npm run migrate:generate`: gera artefatos do Drizzle a partir do schema
 - `npm run migrate`: aplica migrações no banco
-- `npm run drizzle:studio`: abre o Drizzle Studio
 - `npm run db:setup`: configura o banco de dados (gera e aplica migrações)
-- `npm run db:reset`: reseta o banco SQLite
+- `npm run db:reset`: **DELETA** o banco SQLite e recria do zero
 - `npm run db:check`: verifica o status do banco SQLite
+
+### Seeds (Popular dados)
+- `npm run db:seed`: executa seed completo (usuários + cursos + matrículas)
+  - Padrão: 5 usuários, 20 cursos, 3 matrículas/usuário
+  - Com parâmetros: `npm run db:seed -- --users=10 --courses=8 --enrollments=4`
+  - **Algoritmo de matrículas**: Cada usuário é matriculado em N cursos **aleatórios** sem repetição
+    - Exemplo: 3 usuários, 5 cursos, 2 matrículas/usuário = 6 matrículas totais
+    - User 1 → sorteados: Course A, Course D
+    - User 2 → sorteados: Course B, Course E
+    - User 3 → sorteados: Course C, Course A
+- `npm run db:seed-users [quantidade]`: cria apenas usuários (padrão: 2)
+- `npm run db:seed-courses [limite]`: cria apenas cursos (padrão: todos os 20)
+
+### Resetar Tabelas (limpa dados, mantém estrutura, reseta IDs)
+> **Importante:** Estes comandos **apagam todos os registros** da tabela e **resetam os IDs autoincrementais para 1**.
+
+- `npm run db:reset-table [nome]`: reseta tabela específica (users, courses ou enrollments)
+- `npm run db:reset-users`: limpa apenas a tabela `users`
+- `npm run db:reset-courses`: limpa apenas a tabela `courses`
+- `npm run db:reset-enrollments`: limpa apenas a tabela `enrollments`
+- `npm run db:reset-all-tables`: limpa TODAS as tabelas (mantém estrutura do banco)
+
+**Exemplo de uso:**
+```bash
+# Cenário: Você tem cursos com IDs 5, 6, 7 e quer recomeçar do ID 1
+npm run db:reset-courses    # Limpa tabela courses
+npm run db:seed-courses 3   # Cria 3 cursos com IDs 1, 2, 3
+```
 
 ## Fluxo principal (Mermaid)
 
@@ -159,10 +213,58 @@ sequenceDiagram
 ```
 
 ## Dicas e solução de problemas
-- Arquivo SQLite não encontrado: confirme que `npm run db:setup` foi executado e que o arquivo `src/database/dev.db` existe.
-- Variável `NODE_ENV` ausente: verifique seu `.env`. A documentação em `/docs` só aparece quando `NODE_ENV=development`.
-- Docs não aparecem em `/docs`: garanta `NODE_ENV=development` no `.env` e reinicie o servidor.
-- Banco corrompido: execute `npm run db:reset` para resetar o banco SQLite.
+
+### Problema: Banco de dados não criado ou vazio
+**Solução:**
+```bash
+# 1. Verificar status do banco
+npm run db:check
+
+# 2. Se o banco estiver vazio ou corrompido, execute:
+npm run db:reset
+
+# 3. Popular com dados de exemplo
+npm run db:seed -- --users=5 --courses=10 --enrollments=3
+```
+
+### Problema: Migrações ausentes (pasta drizzle/ vazia)
+**Solução:**
+```bash
+# 1. Regenerar migrações
+npm run migrate:generate
+
+# 2. Aplicar migrações
+npm run migrate
+
+# 3. Verificar se funcionou
+npm run db:check
+```
+
+### Problema: Preciso limpar dados de teste mas manter a estrutura
+**Solução:**
+```bash
+# Resetar uma tabela específica (apaga dados e reseta IDs)
+npm run db:reset-courses
+npm run db:reset-users
+
+# Resetar TODAS as tabelas (mantém estrutura do banco)
+npm run db:reset-all-tables
+
+# Popular novamente com dados limpos
+npm run db:seed -- --users=5 --courses=10 --enrollments=3
+```
+
+### Diferença entre comandos de reset
+- **`npm run db:reset`**: DELETA o arquivo do banco e recria tudo do zero (estrutura + dados)
+- **`npm run db:reset-table [nome]`**: Limpa apenas UMA tabela, mantém estrutura e reseta IDs para começar do 1
+- **`npm run db:reset-all-tables`**: Limpa TODAS as tabelas, mas mantém a estrutura do banco
+
+### Outros problemas comuns
+- **Arquivo SQLite não encontrado**: confirme que `npm run db:setup` foi executado e que o arquivo `src/database/dev.db` existe.
+- **Variável `NODE_ENV` ausente**: verifique seu `.env`. A documentação em `/docs` só aparece quando `NODE_ENV=development`.
+- **Docs não aparecem em `/docs`**: garanta `NODE_ENV=development` no `.env` e reinicie o servidor.
+- **Banco corrompido**: execute `npm run db:reset` para resetar o banco SQLite.
+- **Erro ao popular dados**: certifique-se de que as migrações foram aplicadas antes de rodar os seeds.
 
 ## Licença
 ISC (ver `package.json`).

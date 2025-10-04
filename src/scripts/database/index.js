@@ -60,18 +60,26 @@ function showHelp() {
     
     log('\n📋 Comandos disponíveis:', 'green');
     log('   migrate - Aplicar migrações do banco', 'cyan');
+    log('   seed-users [quantidade] - Popular o banco com usuários (padrão 2)', 'cyan');
+    log('   seed-courses [limite] - Popular o banco com cursos (limite opcional)', 'cyan');
     log('   check   - Verificar status do banco', 'cyan');
     log('   help    - Mostra esta ajuda', 'cyan');
     
     log('\n💡 Exemplos de uso:', 'yellow');
     log('   npm run db:migrate', 'cyan');
+    log('   npm run db:seed', 'cyan');
+    log('   npm run db:seed 5', 'cyan');
+    log('   npm run db:seed-courses', 'cyan');
+    log('   npm run db:seed-courses 10', 'cyan');
     log('   npm run db:check', 'cyan');
     
     log('\n🔗 Scripts npm disponíveis:', 'green');
-    log('   npm run db:migrate - Aplicar migrações', 'cyan');
-    log('   npm run db:check   - Verificar status', 'cyan');
-    log('   npm run db:setup   - Configuração inicial', 'cyan');
-    log('   npm run db:reset   - Reset do banco', 'cyan');
+    log('   npm run db:migrate      - Aplicar migrações', 'cyan');
+    log('   npm run db:seed         - Popular usuários', 'cyan');
+    log('   npm run db:seed-courses - Popular cursos', 'cyan');
+    log('   npm run db:check        - Verificar status', 'cyan');
+    log('   npm run db:setup        - Configuração inicial', 'cyan');
+    log('   npm run db:reset        - Reset do banco', 'cyan');
     
     log('\n📚 Documentação:', 'green');
     log('   docs/migracoes-drizzle.md - Guia de migrações', 'cyan');
@@ -88,6 +96,18 @@ function check() {
     execCommand('node src/scripts/database/check-db.js', 'Verificando status');
 }
 
+function seedUsers() {
+    log('🌱 Populando banco com usuários...', 'bright');
+    const quantity = process.argv[3] ? parseInt(process.argv[3]) : undefined;
+    execCommand(`tsx src/database/seed-users.ts ${quantity !== undefined ? quantity : ''}`, 'Populando usuários');
+}
+
+function seedCourses() {
+    log('🌱 Populando banco com cursos...', 'bright');
+    const limit = process.argv[3] ? parseInt(process.argv[3]) : undefined;
+    execCommand(`tsx src/database/seed-courses.ts ${limit !== undefined ? limit : ''}`, 'Populando cursos');
+}
+
 function main() {
     const command = process.argv[2];
     
@@ -98,6 +118,14 @@ function main() {
             
         case 'check':
             check();
+            break;
+
+        case 'seed-users':
+            seedUsers();
+            break;
+        
+        case 'seed-courses':
+            seedCourses();
             break;
             
         case 'help':
@@ -123,4 +151,4 @@ if (import.meta.url === `file://${process.argv[1]}` || import.meta.url.endsWith(
     main();
 }
 
-export { main, migrate, check };
+export { main, migrate, check, seedUsers, seedCourses };

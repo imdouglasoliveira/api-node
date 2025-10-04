@@ -7,6 +7,15 @@ CREATE TABLE `courses` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `courses_title_unique` ON `courses` (`title`);--> statement-breakpoint
+CREATE TABLE `enrollments` (
+	`user_id` integer NOT NULL,
+	`course_id` integer NOT NULL,
+	`created_at` integer NOT NULL,
+	`updated_at` integer NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`course_id`) REFERENCES `courses`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
 CREATE TABLE `users` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`first_name` text NOT NULL,

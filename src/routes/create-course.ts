@@ -13,11 +13,13 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (server) => {
             body: z.union([
                 // Para um único curso
                 z.object({
-                    title: z.string().min(1, 'Título é obrigatório').max(100, 'Título muito longo')
+                    title: z.string().min(1, 'Título é obrigatório').max(100, 'Título muito longo'),
+                    description: z.string().nullable().optional()
                 }),
                 // Para múltiplos cursos
                 z.array(z.object({
-                    title: z.string().min(1, 'Título é obrigatório').max(100, 'Título muito longo')
+                    title: z.string().min(1, 'Título é obrigatório').max(100, 'Título muito longo'),
+                    description: z.string().nullable().optional()
                 })).min(1, 'Array não pode estar vazio').max(50, 'Máximo 50 cursos por vez')
             ]),
             response: {
@@ -25,7 +27,11 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (server) => {
                     z.object({
                         success: z.boolean(),
                         data: z.object({
-                            courseId: z.number()
+                            id: z.number(),
+                            title: z.string(),
+                            description: z.string().nullable(),
+                            created_at: z.number(),
+                            updated_at: z.number()
                         }).describe('Curso criado com sucesso - único curso')
                     }),
                     z.object({
@@ -33,12 +39,18 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (server) => {
                         data: z.object({
                             courses: z.array(z.object({
                                 id: z.number(),
-                                title: z.string()
+                                title: z.string(),
+                                description: z.string().nullable(),
+                                created_at: z.number(),
+                                updated_at: z.number()
                             })),
                             total: z.number()
                         }).describe('Cursos criados com sucesso - múltiplos cursos')
                     })
-                ])
+                ]),
+                500: z.object({
+                    error: z.string()
+                }).describe('Erro interno do servidor')
             }
         }
     }, async (request, reply) => {
@@ -48,7 +60,7 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (server) => {
             try {
                 const coursesToInsert = body.map(course => ({
                     title: course.title,
-                    description: null
+                    description: course.description || null
                 }))
 
                 // Inserir todos os cursos de uma vez
@@ -63,13 +75,17 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (server) => {
                     data: {
                         courses: result.map((course) => ({
                             id: course.id,
-                            title: course.title
+                            title: course.title,
+                            description: course.description,
+                            created_at: course.created_at.getTime(),
+                            updated_at: course.updated_at.getTime()
                         })),
                         total: result.length
                     }
                 })
             } catch (error) {
-                server.log.error('Erro ao criar cursos:', error) // Uso do logger do Fastify
+                const errorMessage = error instanceof Error ? error.message : String(error);
+                server.log.error(`Erro ao criar cursos: ${errorMessage}`);
                 return reply.status(500).send({ error: 'Erro ao criar cursos' })
             }
 
@@ -79,13 +95,19 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (server) => {
                 .insert(courses)
                 .values({
                     title: body.title,
-                    description: null
+                    description: body.description || null
                 })
                 .returning()
 
             return reply.status(201).send({
                 success: true,
-                data: { courseId: result[0].id }
+                data: {
+                    id: result[0].id,
+                    title: result[0].title,
+                    description: result[0].description,
+                    created_at: result[0].created_at.getTime(),
+                    updated_at: result[0].updated_at.getTime()
+                }
             })
         }
     })

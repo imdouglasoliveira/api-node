@@ -3,14 +3,8 @@ POST http://localhost:3333/courses HTTP/1.1
 Content-Type: application/json
 
 {
-  "title": "TypeScript",
-  "title": "Docker",
-  "title": "PostgreSQL",
-  "title": "Next.js",
-  "title": "Go",
-  "title": "Engenharia de Prompt",
-  "title": "Python",
-  "title": "Git"
+  "title": "Cursor AI",
+  "description": "Cursor AI é um editor de código inteligente"
 }
 
 ###
@@ -19,15 +13,20 @@ POST http://localhost:3333/courses HTTP/1.1
 Content-Type: application/json
 
 [
-  { "title": "TypeScript" },
-  { "title": "Docker" },
-  { "title": "PostgreSQL" },
-  { "title": "Next.js" },
-  { "title": "Go" },
-  { "title": "Engenharia de Prompt" },
-  { "title": "Python" },
-  { "title": "Git" }
+  { "title": "Crewai", "description": "Crewai é um framework de IA para desenvolvimento de aplicativos" },
+  { "title": "Multi agente com Crewai", "description": "Criando Multi Agent Systems com CrewAI" },
+  { "title": "MCPs", "description": "MCPs são interfaces de comunicação para IA" },
+  { "title": "Deploy com Crewai", "description": "Deploy de aplicações com CrewAI" },
+  { "title": "Criando agentes com Agno" },
+  { "title": "Soft Skills" },
+  { "title": "Apps Desktop com Electron" },
+  { "title": "Acessibilidade com ReactJS" }
+
 ]
+
+###
+# Get para buscar todos os cursos com paginação (página 1, limite 5)
+GET http://localhost:3333/courses?page=2&limit=5 HTTP/1.1
 
 ###
 # Get para buscar todos os cursos

@@ -26,37 +26,39 @@ async function startServer() {
         }
     }).withTypeProvider<ZodTypeProvider>() 
     
-    // Add Fastify Swagger
-    server.register(fastifySwagger, {
-        openapi: {
-            info: {
+if (process.env.NODE_ENV === 'development') {
+        // Add Fastify Swagger
+        server.register(fastifySwagger, {
+            openapi: {
+                info: {
+                    title: 'API de Cursos',
+                    version: '1.0.0'
+                }
+            },
+            transform: jsonSchemaTransform,
+        })
+    
+        // Swagger User Interface
+        /*server.register(fastifySwaggerUi, {
+            routePrefix: '/docs',
+            uiConfig: {
+                docExpansion: 'full',
+                deepLinking: true
+            }
+        })*/
+    
+        // Scalar API Reference
+        await server.register(fastifyApiReference, {
+            routePrefix: '/docs',
+            apiReference: {
                 title: 'API de Cursos',
                 version: '1.0.0'
+            },
+            configuration: {
+                theme: 'kepler'
             }
-        },
-        transform: jsonSchemaTransform,
-    })
-
-    // Swagger User Interface
-    /*server.register(fastifySwaggerUi, {
-        routePrefix: '/docs',
-        uiConfig: {
-            docExpansion: 'full',
-            deepLinking: true
-        }
-    })*/
-
-    // Scalar API Reference
-    await server.register(fastifyApiReference, {
-        routePrefix: '/docs',
-        apiReference: {
-            title: 'API de Cursos',
-            version: '1.0.0'
-        },
-        configuration: {
-            theme: 'kepler'
-        }
-    })
+        })
+}
 
     /* theme?: 'alternate' | 'default' | 'moon' | 'purple' | 'solarized' |
 'bluePlanet' | 'saturn' | 'kepler' | 'mars' | 'deepSpace' | 'laserwave' | 'none' */

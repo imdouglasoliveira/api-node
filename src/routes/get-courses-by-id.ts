@@ -4,29 +4,38 @@ import { courses } from '../database/schema.js'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 
-// Buscar um curso específico pelo ID
-export const getCoursesByIdRoute: FastifyPluginAsyncZod = async (server) => {
+// Search for a specific course by ID
+export const getCourseByIdRoute: FastifyPluginAsyncZod = async (server) => {
     server.get('/courses/:id', {
-        schema: {
-            params: z.object({
-                id: z.string().regex(/^\d+$/, 'ID do curso deve ser um número')
+      schema: {
+        tags: ['courses'],
+        summary: 'Get course by ID',
+        params: z.object({
+          id: z.string().regex(/^\d+$/, 'ID do curso deve ser um número'),
+        }),
+        response: {
+          200: z.object({
+            course: z.object({
+              id: z.number(),
+              title: z.string(),
+              description: z.string().nullable(),
             })
-        }
+          }),
+          404: z.null().describe('Course not found'),
+        },
+      },
     }, async (request, reply) => {
-            const courseId = parseInt(request.params.id)
-            const result = await db.select({
-                id: courses.id,
-                title: courses.title,
-                created_at: courses.created_at,
-                updated_at: courses.updated_at
-            })
-            .from(courses)
-            .where(eq(courses.id, courseId))
-
-        if (result.length > 0) {
-            return reply.status(200).send({ result: result[0] })
-        }
-
-        return reply.status(404).send({ error: 'Curso não encontrado' })
+      const courseId = parseInt(request.params.id)
+    
+      const result = await db
+        .select()
+        .from(courses)
+        .where(eq(courses.id, courseId))
+    
+      if (result.length > 0) {
+        return { course: result[0] }
+      }
+    
+      return reply.status(404).send()
     })
-}
+  }

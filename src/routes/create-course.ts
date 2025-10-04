@@ -3,20 +3,20 @@ import { db } from '../database/client.js'
 import { courses } from '../database/schema.js'
 import { z } from 'zod'
 
-// Criar UM novo curso ou VÁRIOS
+// Create a new course or multiple courses
 export const createCourseRoute: FastifyPluginAsyncZod = async (server) => {
     server.post('/courses', {
         schema: {
             tags: ['courses'],
-            summary: 'Criar um novo curso ou vários cursos',
-            description: 'Cria um novo curso ou vários cursos na base de dados',
+            summary: 'Create a new course or multiple courses',
+            description: 'Creates a new course or multiple courses in the database',
             body: z.union([
-                // Para um único curso
+                // For a single course
                 z.object({
                     title: z.string().min(1, 'Título é obrigatório').max(100, 'Título muito longo'),
                     description: z.string().nullable().optional()
                 }),
-                // Para múltiplos cursos
+                // For multiple courses
                 z.array(z.object({
                     title: z.string().min(1, 'Título é obrigatório').max(100, 'Título muito longo'),
                     description: z.string().nullable().optional()
@@ -63,13 +63,13 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (server) => {
                     description: course.description || null
                 }))
 
-                // Inserir todos os cursos de uma vez
+                // Insert all courses at once
                 const result = await db
                     .insert(courses)
                     .values(coursesToInsert)
                     .returning()
 
-                // Retornar resposta padronizada
+                // Return standardized response
                 return reply.status(201).send({
                     success: true,
                     data: {
@@ -90,7 +90,7 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (server) => {
             }
 
         } else {
-            // Criar um único curso
+            // Create a single course
             const result = await db
                 .insert(courses)
                 .values({

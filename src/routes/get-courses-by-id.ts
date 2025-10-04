@@ -4,10 +4,13 @@ import { courses } from '../database/schema.js'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 
-// Buscar um curso específico pelo ID
+// Search for a specific course by ID
 export const getCoursesByIdRoute: FastifyPluginAsyncZod = async (server) => {
     server.get('/courses/:id', {
         schema: {
+            tags: ['courses'],
+            summary: 'Search for a specific course by ID',
+            description: 'Searches for a specific course by ID in the database',
             params: z.object({
                 id: z.string().regex(/^\d+$/, 'ID do curso deve ser um número')
             })

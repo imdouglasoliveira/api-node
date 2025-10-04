@@ -4,10 +4,13 @@ import { courses } from '../database/schema.js'
 import { z } from 'zod'
 import { sql } from 'drizzle-orm'
 
-// Listar todos os cursos com paginação
+// List all courses with pagination
 export const getCoursesRoute: FastifyPluginAsyncZod = async (server) => {
     server.get('/courses', {
         schema: {
+            tags: ['courses'],
+            summary: 'List all courses with pagination',
+            description: 'Lists all courses with pagination in the database',
             querystring: z.object({
                 page: z.string().transform(Number).default(1),
                 limit: z.string().transform(Number).default(10)
@@ -32,7 +35,7 @@ export const getCoursesRoute: FastifyPluginAsyncZod = async (server) => {
         const { page, limit } = request.query
         const offset = (page - 1) * limit
 
-        // Obter cursos com paginação
+        // Get courses with pagination
         const result = await db.select({
             id: courses.id,
             title: courses.title,
@@ -44,7 +47,7 @@ export const getCoursesRoute: FastifyPluginAsyncZod = async (server) => {
         .limit(limit)
         .offset(offset)
 
-        // Obter contagem total de cursos
+        // Get total count of courses
         const totalItemsResult = await db.select({ count: sql<number>`count(*)` }).from(courses)
         const totalItems = totalItemsResult[0].count
 

@@ -60,7 +60,7 @@ if (process.env.NODE_ENV === 'development') {
         })
 }
 
-    /* theme?: 'alternate' | 'default' | 'moon' | 'purple' | 'solarized' |
+/* theme?: 'alternate' | 'default' | 'moon' | 'purple' | 'solarized' |
 'bluePlanet' | 'saturn' | 'kepler' | 'mars' | 'deepSpace' | 'laserwave' | 'none' */
     
     server.setValidatorCompiler(validatorCompiler)

@@ -15,3 +15,9 @@ export const courses = sqliteTable('courses', {
     updated_at: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())
 });
 
+export const enrollments = sqliteTable('enrollments', {
+    user_id: integer('user_id').notNull().references(() => users.id),
+    course_id: integer('course_id').notNull().references(() => courses.id),
+    created_at: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+    updated_at: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())
+});

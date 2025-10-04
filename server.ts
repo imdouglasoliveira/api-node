@@ -51,7 +51,7 @@ if (process.env.NODE_ENV === 'development') {
         await server.register(fastifyApiReference, {
             routePrefix: '/docs',
             apiReference: {
-                title: 'API de Cursos',
+                title: 'Course API',
                 version: '1.0.0'
             },
             configuration: {

@@ -4,9 +4,9 @@ import { fastifySwagger } from '@fastify/swagger'
 //import { fastifySwaggerUi } from '@fastify/swagger-ui'
 import fastifyApiReference from '@scalar/fastify-api-reference'
 import { validatorCompiler, serializerCompiler, type ZodTypeProvider, jsonSchemaTransform } from 'fastify-type-provider-zod'
-import { getCoursesRoute } from './src/routes/get-courses.ts'
-import { getCourseByIdRoute } from './src/routes/get-courses-by-id.ts'
-import { createCourseRoute } from './src/routes/create-course.ts'
+import { getCoursesRoute } from './src/routes/courses/get-courses.ts'
+import { getCourseByIdRoute } from './src/routes/courses/get-courses-by-id.ts'
+import { createCourseRoute } from './src/routes/courses/create-course.ts'
 
 
 config()

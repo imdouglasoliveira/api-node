@@ -1,0 +1,46 @@
+### Courses API Requests ###
+
+# Post to create a new course
+POST http://localhost:3333/courses HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Cursor AI",
+  "description": "Cursor AI é um editor de código inteligente"
+}
+
+###
+# Post to create multiple courses
+POST http://localhost:3333/courses HTTP/1.1
+Content-Type: application/json
+
+[
+  { "title": "Crewai", "description": "Crewai é um framework de IA para desenvolvimento de aplicativos" },
+  { "title": "Multi agente com Crewai", "description": "Criando Multi Agent Systems com CrewAI" },
+  { "title": "MCPs", "description": "MCPs são interfaces de comunicação para IA" },
+  { "title": "Deploy com Crewai", "description": "Deploy de aplicações com CrewAI" },
+  { "title": "Criando agentes com Agno" },
+  { "title": "Soft Skills" },
+  { "title": "Apps Desktop com Electron" },
+  { "title": "Acessibilidade com ReactJS" }
+]
+
+###
+# Get to search all courses
+GET http://localhost:3333/courses HTTP/1.1
+
+###
+# Get to fetch all courses with pagination (page 2, limit 5)
+GET http://localhost:3333/courses?page=2&limit=5 HTTP/1.1
+
+###
+# Get to search all courses with search
+GET http://localhost:3333/courses?search=Crewai HTTP/1.1
+
+###
+# Get to search all courses with search + orderBy
+GET http://localhost:3333/courses?search=Crewai&orderBy=title HTTP/1.1
+
+###
+# Get to search for a course by id
+GET http://localhost:3333/courses/1 HTTP/1.1

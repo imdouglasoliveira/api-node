@@ -68,27 +68,74 @@ npm run dev
 ## Endpoints
 Base URL: `http://localhost:3333`
 
+### Courses (Cursos)
 - **POST `/courses`**
-  - Cria um curso
+  - Cria um curso único ou múltiplos cursos
   - Body (JSON):
     ```json
-    { "title": "Curso de Docker" }
+    { "title": "Curso de Docker", "description": "Aprenda Docker" }
     ```
-  - Respostas:
-    - 201: `{ "courseId": 1 }`
+    ou array para múltiplos:
+    ```json
+    [
+      { "title": "Curso A", "description": "Desc A" },
+      { "title": "Curso B" }
+    ]
+    ```
+  - Respostas: 201 (sucesso), 500 (erro)
 
 - **GET `/courses`**
-  - Lista todos os cursos
-  - 200: `{ "result": [{ "id": 1, "title": "..." }], "total": 1 }`
+  - Lista todos os cursos com paginação, busca e ordenação
+  - Query params: `page`, `limit`, `search`, `orderBy`
+  - 200: `{ "courses": [...], "currentPage": 1, "perPage": 10, "totalItems": 20, "totalPages": 2 }`
 
 - **GET `/courses/:id`**
   - Busca um curso pelo ID
-  - Parâmetros: `id` (number)
-  - Respostas:
-    - 200: `{ "course": { "id": 1, "title": "...", "description": "... | null" } }`
-    - 404: vazio
+  - Respostas: 200 (encontrado), 404 (não encontrado)
 
-Há um arquivo `requisicoes.http` com exemplos prontos (compatível com extensões de REST Client).
+### Users (Usuários)
+- **POST `/users`**
+  - Cria um usuário único ou múltiplos usuários
+  - Body (JSON):
+    ```json
+    { "first_name": "João", "last_name": "Silva", "email": "joao@email.com" }
+    ```
+    ou array para múltiplos usuários
+  - Respostas: 201 (sucesso), 500 (erro)
+
+- **GET `/users`**
+  - Lista todos os usuários com paginação, busca e ordenação
+  - Query params: `page`, `limit`, `search`, `orderBy`
+  - 200: `{ "users": [...], "currentPage": 1, "perPage": 10, "totalItems": 5, "totalPages": 1 }`
+
+- **GET `/users/:id`**
+  - Busca um usuário pelo ID
+  - Respostas: 200 (encontrado), 404 (não encontrado)
+
+### Enrollments (Matrículas)
+- **POST `/enrollments`**
+  - Cria uma matrícula única ou múltiplas matrículas
+  - Body (JSON):
+    ```json
+    { "user_id": 1, "course_id": 1 }
+    ```
+    ou array para múltiplas matrículas
+  - Respostas: 201 (sucesso), 500 (erro)
+
+- **GET `/enrollments`**
+  - Lista todas as matrículas com paginação e filtros
+  - Query params: `page`, `limit`, `user_id`, `course_id`
+  - 200: `{ "enrollments": [...], "currentPage": 1, "perPage": 10, "totalItems": 15, "totalPages": 2 }`
+  - Retorna dados enriquecidos com nome do usuário e título do curso
+
+- **GET `/enrollments/:user_id/:course_id`**
+  - Busca uma matrícula específica por user_id e course_id
+  - Respostas: 200 (encontrado), 404 (não encontrado)
+
+Há arquivos `.http` na pasta `src/requests/` com exemplos prontos (compatível com extensões de REST Client):
+- `courses.http` - Requisições de cursos
+- `users.http` - Requisições de usuários
+- `enrollments.http` - Requisições de matrículas
 
 ## Estrutura do Projeto
 ```
@@ -105,7 +152,13 @@ api-node/
 │   │   ├── client.ts     # Cliente SQLite
 │   │   └── dev.db        # Arquivo do banco SQLite
 │   ├── requests/         # Arquivos de requisições HTTP
-│   │   └── requisicoes.http  # Exemplos de requisições
+│   │   ├── courses.http      # Exemplos de requisições de cursos
+│   │   ├── users.http        # Exemplos de requisições de usuários
+│   │   └── enrollments.http  # Exemplos de requisições de matrículas
+│   ├── routes/           # Rotas da API
+│   │   ├── courses/      # Rotas de cursos
+│   │   ├── users/        # Rotas de usuários
+│   │   └── enrollments/  # Rotas de matrículas
 │   └── scripts/          # Scripts utilitários
 │       ├── apply-migration.js  # Aplicar migrações
 │       └── check-db.js          # Verificar banco
@@ -128,11 +181,18 @@ Tabelas principais definidas em `src/database/schema.ts`:
   - `description` (text, opcional)
   - `created_at` (timestamp, obrigatório)
   - `updated_at` (timestamp, obrigatório)
-- **`users`** (exemplo para estudos)
+- **`users`**
   - `id` (integer, pk, auto-increment)
   - `first_name` (text, obrigatório)
   - `last_name` (text, obrigatório)
   - `email` (text, único, obrigatório)
+  - `created_at` (timestamp, obrigatório)
+  - `updated_at` (timestamp, obrigatório)
+- **`enrollments`**
+  - `user_id` (integer, fk → users.id, obrigatório)
+  - `course_id` (integer, fk → courses.id, obrigatório)
+  - `created_at` (timestamp, obrigatório)
+  - `updated_at` (timestamp, obrigatório)
 
 ## Scripts
 

@@ -133,9 +133,9 @@ Base URL: `http://localhost:3333`
   - Respostas: 200 (encontrado), 404 (não encontrado)
 
 Há arquivos `.http` na pasta `src/requests/` com exemplos prontos (compatível com extensões de REST Client):
-- `courses.http` - Requisições de cursos
-- `users.http` - Requisições de usuários
-- `enrollments.http` - Requisições de matrículas
+- `src/requests/courses/courses.http` - Requisições de cursos
+- `src/requests/users/users.http` - Requisições de usuários
+- `src/requests/enrollments/enrollments.http` - Requisições de matrículas
 
 ## Estrutura do Projeto
 ```
@@ -150,18 +150,35 @@ api-node/
 │   ├── database/         # Schema e cliente do banco
 │   │   ├── schema.ts     # Definição das tabelas
 │   │   ├── client.ts     # Cliente SQLite
-│   │   └── dev.db        # Arquivo do banco SQLite
-│   ├── requests/         # Arquivos de requisições HTTP
-│   │   ├── courses.http      # Exemplos de requisições de cursos
-│   │   ├── users.http        # Exemplos de requisições de usuários
-│   │   └── enrollments.http  # Exemplos de requisições de matrículas
+│   │   ├── dev.db        # Arquivo do banco SQLite
+│   │   └── seeds/        # Scripts para popular o banco
+│   │       ├── index.ts           # Seed completo (users + courses + enrollments)
+│   │       ├── seed-users.ts      # Seed apenas de usuários
+│   │       └── seed-courses.ts    # Seed apenas de cursos
+│   ├── requests/         # Arquivos de requisições HTTP (REST Client)
+│   │   ├── courses/
+│   │   │   └── courses.http      # Exemplos de requisições de cursos
+│   │   ├── users/
+│   │   │   └── users.http        # Exemplos de requisições de usuários
+│   │   └── enrollments/
+│   │       └── enrollments.http  # Exemplos de requisições de matrículas
 │   ├── routes/           # Rotas da API
-│   │   ├── courses/      # Rotas de cursos
-│   │   ├── users/        # Rotas de usuários
-│   │   └── enrollments/  # Rotas de matrículas
+│   │   ├── courses/      # Rotas de cursos (get, create, get-by-id)
+│   │   ├── users/        # Rotas de usuários (get, create, get-by-id)
+│   │   └── enrollments/  # Rotas de matrículas (get, create, get-by-ids)
 │   └── scripts/          # Scripts utilitários
-│       ├── apply-migration.js  # Aplicar migrações
-│       └── check-db.js          # Verificar banco
+│       ├── database/     # Scripts de gerenciamento do banco
+│       │   ├── index.js          # Exportações
+│       │   ├── apply-migration.js # Aplicar migrações
+│       │   ├── check-db.js       # Verificar status do banco
+│       │   └── reset-table.js    # Resetar tabelas específicas
+│       ├── git/          # Scripts de automação Git
+│       │   ├── index.js          # Exportações
+│       │   ├── cleanup.js        # Limpar processos
+│       │   ├── deploy.js         # Deploy automatizado
+│       │   ├── push-dev.js       # Push para dev
+│       │   └── status.js         # Git status formatado
+│       └── README.md     # Documentação dos scripts
 ├── .claude/              # Configurações Claude (local)
 ├── server.ts            # Servidor principal
 ├── CLAUDE.md            # Documentação Claude (local)

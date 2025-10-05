@@ -1,3 +1,5 @@
+### Courses API Requests ###
+
 # Post to create a new course
 POST http://localhost:3333/courses HTTP/1.1
 Content-Type: application/json
@@ -21,7 +23,6 @@ Content-Type: application/json
   { "title": "Soft Skills" },
   { "title": "Apps Desktop com Electron" },
   { "title": "Acessibilidade com ReactJS" }
-
 ]
 
 ###
@@ -29,7 +30,7 @@ Content-Type: application/json
 GET http://localhost:3333/courses HTTP/1.1
 
 ###
-# Get to fetch all courses with pagination (page 1, limit 5)
+# Get to fetch all courses with pagination (page 2, limit 5)
 GET http://localhost:3333/courses?page=2&limit=5 HTTP/1.1
 
 ###

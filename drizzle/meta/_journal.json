@@ -8,6 +8,13 @@
       "when": 1759610354143,
       "tag": "0000_blushing_scrambler",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1759673274087,
+      "tag": "0001_clever_rhino",
+      "breakpoints": true
     }
   ]
 }

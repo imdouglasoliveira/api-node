@@ -1,7 +1,7 @@
 import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
-import { db } from '../database/client.js'
-import { courses } from '../database/schema.js'
-import { sql, like, asc, desc } from 'drizzle-orm'
+import { db } from '../../database/client.ts'
+import { courses } from '../../database/schema.ts'
+import { sql, like, asc, desc, and, SQL } from 'drizzle-orm'
 import { z } from 'zod'
 
 
@@ -14,11 +14,17 @@ export const getCoursesRoute: FastifyPluginAsyncZod = async (server) => {
             summary: 'List all courses with pagination',
             description: 'Lists all courses with pagination in the database',
             querystring: z.object({
-                page: z.coerce.number().default(1),
-                limit: z.coerce.number().default(10),
+                page: z.coerce.number().optional().default(1),
+                limit: z.coerce.number().optional().default(10),
                 search: z.string().optional(),
-                orderBy: z.enum(['title','id']).optional().default('id')
-            }),
+                orderby: z.string().optional(),
+                orderBy: z.string().optional()
+            }).transform((data) => ({
+                page: data.page,
+                limit: data.limit,
+                search: data.search,
+                orderBy: (data.orderby || data.orderBy || 'id').toLowerCase() as 'title' | 'id'
+            })),
             response: {
                 200: z.object({
                     courses: z.array(z.object({

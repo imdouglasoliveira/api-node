@@ -4,7 +4,9 @@ export const users = sqliteTable('users', {
     id: integer('id').primaryKey({ autoIncrement: true }),
     first_name: text('first_name').notNull(),
     last_name: text('last_name').notNull(),
-    email: text('email').notNull().unique()
+    email: text('email').notNull().unique(),
+    created_at: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+    updated_at: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())
 });
 
 export const courses = sqliteTable('courses', {

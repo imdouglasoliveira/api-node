@@ -1,9 +1,8 @@
 import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { db } from '../../database/client.ts'
-import { courses } from '../../database/schema.ts'
-import { sql, like, asc, desc, and, SQL } from 'drizzle-orm'
+import { courses, enrollments } from '../../database/schema.ts'
+import { asc, type SQL, and, eq, count, sql, like } from 'drizzle-orm'
 import { z } from 'zod'
-
 
 // List all courses with pagination
 // Search params: page, limit, search, orderBy
@@ -17,13 +16,13 @@ export const getCoursesRoute: FastifyPluginAsyncZod = async (server) => {
                 page: z.coerce.number().optional().default(1),
                 limit: z.coerce.number().optional().default(10),
                 search: z.string().optional(),
-                orderby: z.string().optional(),
+               //orderby: z.string().optional(),
                 orderBy: z.string().optional()
             }).transform((data) => ({
                 page: data.page,
                 limit: data.limit,
                 search: data.search,
-                orderBy: (data.orderby || data.orderBy || 'id').toLowerCase() as 'title' | 'id'
+                orderBy: ( data.orderBy || 'id').toLowerCase() as 'title' | 'id'
             })),
             response: {
                 200: z.object({
@@ -31,9 +30,11 @@ export const getCoursesRoute: FastifyPluginAsyncZod = async (server) => {
                         id: z.number(),
                         title: z.string(),
                         description: z.string().nullable(),
+                        enrollments: z.number(),
                         created_at: z.number(),
                         updated_at: z.number()
                     })),
+                    totalEnrollments: z.number(),
                     currentPage: z.number(),
                     perPage: z.number(),
                     totalItems: z.number(),
@@ -48,31 +49,33 @@ export const getCoursesRoute: FastifyPluginAsyncZod = async (server) => {
         const conditions: SQL[] = []
 
         if (search) {
-            conditions.push(like(sql`lower(${courses.title})`, `%${search.toLowerCase()}%`))
+            conditions.push(
+                sql`lower(${courses.title}) LIKE ${`%${search.toLowerCase()}%`}`
+            )
         }
 
         // Get courses with pagination
-        const [result, totalItemsResult] = await Promise.all([
+        const [result, totalItemsResult, totalCoursesEnrollments] = await Promise.all([
             db.select({
                 id: courses.id,
                 title: courses.title,
                 description: courses.description,
+                enrollments: count(enrollments.course_id),
                 created_at: courses.created_at,
                 updated_at: courses.updated_at
             })
             .from(courses)
-            .orderBy(asc(courses[orderBy]))
+            .leftJoin(enrollments, eq(enrollments.course_id, courses.id))
             .where(and(...conditions))
+            .groupBy(courses.id)
+            .orderBy(asc(courses[orderBy]))
             .limit(limit)
             .offset(offset),
-
-            // Get total count of courses
-            db.select({ count: sql<number>`count(*)` })
-            .from(courses)
-            .where(and(...conditions))
+          db.$count(courses, and(...conditions)),
+          db.$count(enrollments)
         ])
 
-        const totalItems = totalItemsResult[0].count
+        const totalItems = totalItemsResult
         const totalPages = Math.ceil(totalItems / limit)
 
         return reply.status(200).send({
@@ -80,9 +83,11 @@ export const getCoursesRoute: FastifyPluginAsyncZod = async (server) => {
                 id: course.id,
                 title: course.title,
                 description: course.description,
+                enrollments: course.enrollments,
                 created_at: course.created_at.getTime(),
                 updated_at: course.updated_at.getTime()
             })),
+            totalEnrollments: totalCoursesEnrollments,
             currentPage: page,
             perPage: limit,
             totalItems,

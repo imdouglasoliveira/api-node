@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
 export const users = sqliteTable('users', {
     id: integer('id').primaryKey({ autoIncrement: true }),
@@ -18,8 +18,11 @@ export const courses = sqliteTable('courses', {
 });
 
 export const enrollments = sqliteTable('enrollments', {
+    id: integer('id').primaryKey({ autoIncrement: true }),
     user_id: integer('user_id').notNull().references(() => users.id),
     course_id: integer('course_id').notNull().references(() => courses.id),
     created_at: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
     updated_at: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())
-});
+}, table => [
+    uniqueIndex('enrollments_user_id_course_id_unique').on(table.user_id, table.course_id)
+]);

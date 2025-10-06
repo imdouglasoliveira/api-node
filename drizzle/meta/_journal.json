@@ -15,6 +15,20 @@
       "when": 1759673274087,
       "tag": "0001_clever_rhino",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1759793891868,
+      "tag": "0002_fuzzy_radioactive_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1759794994360,
+      "tag": "0003_military_havok",
+      "breakpoints": true
     }
   ]
 }

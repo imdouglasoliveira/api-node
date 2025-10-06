@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `enrollments_user_id_course_id_unique` ON `enrollments` (`user_id`,`course_id`);

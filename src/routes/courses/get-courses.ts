@@ -16,13 +16,13 @@ export const getCoursesRoute: FastifyPluginAsyncZod = async (server) => {
                 page: z.coerce.number().optional().default(1),
                 limit: z.coerce.number().optional().default(10),
                 search: z.string().optional(),
-                orderby: z.string().optional(),
+               //orderby: z.string().optional(),
                 orderBy: z.string().optional()
             }).transform((data) => ({
                 page: data.page,
                 limit: data.limit,
                 search: data.search,
-                orderBy: (data.orderby || data.orderBy || 'id').toLowerCase() as 'title' | 'id'
+                orderBy: ( data.orderBy || 'id').toLowerCase() as 'title' | 'id'
             })),
             response: {
                 200: z.object({

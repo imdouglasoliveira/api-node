@@ -12,6 +12,7 @@ export const getEnrollmentsRoute: FastifyPluginAsyncZod = async (server) => {
             summary: 'List all enrollments with pagination',
             description: 'Lists all enrollments with pagination and optional filters',
             querystring: z.object({
+                id: z.coerce.number().optional(),
                 page: z.coerce.number().optional().default(1),
                 limit: z.coerce.number().optional().default(10),
                 user_id: z.coerce.number().optional(),
@@ -20,6 +21,7 @@ export const getEnrollmentsRoute: FastifyPluginAsyncZod = async (server) => {
             response: {
                 200: z.object({
                     enrollments: z.array(z.object({
+                        id: z.number(),
                         user_id: z.number(),
                         course_id: z.number(),
                         user_name: z.string(),
@@ -35,7 +37,7 @@ export const getEnrollmentsRoute: FastifyPluginAsyncZod = async (server) => {
             }
         }
     }, async (request, reply) => {
-        const { page, limit, user_id, course_id } = request.query
+        const { page, limit, user_id, course_id, id } = request.query
         const offset = (page - 1) * limit
 
         const conditions: SQL[] = []
@@ -48,9 +50,14 @@ export const getEnrollmentsRoute: FastifyPluginAsyncZod = async (server) => {
             conditions.push(eq(enrollments.course_id, course_id))
         }
 
+        if (id) {
+            conditions.push(eq(enrollments.id, id))
+        }
+
         // Get enrollments with joins
         const [result, totalItemsResult] = await Promise.all([
             db.select({
+                id: enrollments.id,
                 user_id: enrollments.user_id,
                 course_id: enrollments.course_id,
                 user_first_name: users.first_name,
@@ -65,18 +72,15 @@ export const getEnrollmentsRoute: FastifyPluginAsyncZod = async (server) => {
             .where(conditions.length > 0 ? and(...conditions) : undefined)
             .limit(limit)
             .offset(offset),
-
-            // Get total count
-            db.select({ count: sql<number>`count(*)` })
-            .from(enrollments)
-            .where(conditions.length > 0 ? and(...conditions) : undefined)
+          db.$count(enrollments, and(...conditions)),
         ])
 
-        const totalItems = totalItemsResult[0].count
+        const totalItems = totalItemsResult
         const totalPages = Math.ceil(totalItems / limit)
 
         return reply.status(200).send({
             enrollments: result.map(enrollment => ({
+                id: enrollment.id,
                 user_id: enrollment.user_id,
                 course_id: enrollment.course_id,
                 user_name: `${enrollment.user_first_name} ${enrollment.user_last_name}`,

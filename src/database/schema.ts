@@ -18,6 +18,7 @@ export const courses = sqliteTable('courses', {
 });
 
 export const enrollments = sqliteTable('enrollments', {
+    id: integer('id').primaryKey({ autoIncrement: true }),
     user_id: integer('user_id').notNull().references(() => users.id),
     course_id: integer('course_id').notNull().references(() => courses.id),
     created_at: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),

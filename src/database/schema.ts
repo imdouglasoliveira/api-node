@@ -1,3 +1,4 @@
+import { unique, UniqueConstraint, uniqueKeyName } from 'drizzle-orm/pg-core';
 import { sqliteTable, text, integer, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
 export const users = sqliteTable('users', {

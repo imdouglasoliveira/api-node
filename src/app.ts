@@ -1,30 +1,30 @@
 import { config } from 'dotenv'
-import fastify from 'fastify'
+import fastify, { type FastifyInstance } from 'fastify'
 import { fastifySwagger } from '@fastify/swagger'
 import fastifyApiReference from '@scalar/fastify-api-reference'
 import { validatorCompiler, serializerCompiler, type ZodTypeProvider, jsonSchemaTransform } from 'fastify-type-provider-zod'
 // Get courses
-import { getCoursesRoute } from './src/routes/courses/get-courses.ts'
+import { getCoursesRoute } from './routes/courses/get-courses.ts'
 // Get course by id
-import { getCourseByIdRoute } from './src/routes/courses/get-courses-by-id.ts'
+import { getCourseByIdRoute } from './routes/courses/get-courses-by-id.ts'
 // Create course
-import { createCourseRoute } from './src/routes/courses/create-course.ts'
+import { createCourseRoute } from './routes/courses/create-course.ts'
 // Get users by id
-import { getUsersByIdRoute } from './src/routes/users/get-users-by-id.ts'
+import { getUsersByIdRoute } from './routes/users/get-users-by-id.ts'
 // Get users
-import { getUsersRoute } from './src/routes/users/get-users.ts'
+import { getUsersRoute } from './routes/users/get-users.ts'
 // Create user
-import { createUserRoute } from './src/routes/users/create-user.ts'
+import { createUserRoute } from './routes/users/create-user.ts'
 // Get enrollments
-import { getEnrollmentsRoute } from './src/routes/enrollments/get-enrollments.ts'
+import { getEnrollmentsRoute } from './routes/enrollments/get-enrollments.ts'
 // Get enrollment by ids
-import { getEnrollmentByIdsRoute } from './src/routes/enrollments/get-enrollment-by-ids.ts'
+import { getEnrollmentByIdsRoute } from './routes/enrollments/get-enrollment-by-ids.ts'
 // Create enrollment
-import { createEnrollmentRoute } from './src/routes/enrollments/create-enrollment.ts'
+import { createEnrollmentRoute } from './routes/enrollments/create-enrollment.ts'
 
 config()
 
-async function startServer() {
+async function startServer(): Promise<FastifyInstance> {
     const server = fastify({
         logger: {
             transport: {
@@ -82,10 +82,9 @@ async function startServer() {
     server.register(getEnrollmentsRoute) // List all enrollments
     server.register(getEnrollmentByIdsRoute) // Search for a specific enrollment by user_id and course_id
     server.register(createEnrollmentRoute) // Create a new enrollment or multiple enrollments
-
-    await server.listen({ port: 3333 }).then(() => {
-        console.log('Server is running on port 3333')
-    })
+    
+    // Return the server instance
+    return server
 }
 
-startServer().catch(console.error)
+export { startServer }

@@ -1,6 +1,6 @@
 import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
-import { db } from '../../database/client.js'
-import { courses } from '../../database/schema.js'
+import { db } from '../../database/client.ts'
+import { courses } from '../../database/schema.ts'
 import { z } from 'zod'
 
 // Create a new course or multiple courses
@@ -90,25 +90,31 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (server) => {
             }
 
         } else {
-            // Create a single course
-            const result = await db
-                .insert(courses)
-                .values({
-                    title: body.title,
-                    description: body.description || null
-                })
-                .returning()
+            try {
+                // Create a single course
+                const result = await db
+                    .insert(courses)
+                    .values({
+                        title: body.title,
+                        description: body.description || null
+                    })
+                    .returning()
 
-            return reply.status(201).send({
-                success: true,
-                data: {
-                    id: result[0].id,
-                    title: result[0].title,
-                    description: result[0].description,
-                    created_at: result[0].created_at.getTime(),
-                    updated_at: result[0].updated_at.getTime()
-                }
-            })
+                return reply.status(201).send({
+                    success: true,
+                    data: {
+                        id: result[0].id,
+                        title: result[0].title,
+                        description: result[0].description,
+                        created_at: result[0].created_at.getTime(),
+                        updated_at: result[0].updated_at.getTime()
+                    }
+                })
+            } catch (error) {
+                const errorMessage = error instanceof Error ? error.message : String(error);
+                server.log.error(`Erro ao criar curso: ${errorMessage}`);
+                return reply.status(500).send({ error: 'Erro ao criar curso' })
+            }
         }
     })
 }

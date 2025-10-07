@@ -6,6 +6,9 @@
   "scripts": {
     "start": "tsx src/server.ts",
     "test": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:watch": "vitest",
+    "test:reset": "powershell \"Remove-Item -Force src/database/test.db -ErrorAction SilentlyContinue\" && npm run test",
     "dev": "powershell \"taskkill /F /IM node.exe 2>$null; Start-Sleep 1; tsx --watch src/server.ts\"",
     "dev:clean": "powershell \"taskkill /F /IM node.exe 2>$null; Start-Sleep 2; tsx --watch src/server.ts\"",
     "build": "tsc",
@@ -58,6 +61,8 @@
   "devDependencies": {
     "@types/node": "^24.5.2",
     "@types/supertest": "^6.0.3",
+    "@vitest/ui": "^3.2.4",
+    "dotenv-cli": "^10.0.0",
     "drizzle-kit": "^0.31.5",
     "supertest": "^7.1.4",
     "tsx": "^4.20.6",

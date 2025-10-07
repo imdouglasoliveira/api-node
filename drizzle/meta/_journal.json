@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1759610354143,
-      "tag": "0000_blushing_scrambler",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1759673274087,
-      "tag": "0001_clever_rhino",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1759793891868,
-      "tag": "0002_fuzzy_radioactive_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1759794994360,
-      "tag": "0003_military_havok",
+      "when": 1759813701597,
+      "tag": "0000_big_the_enforcers",
       "breakpoints": true
     }
   ]

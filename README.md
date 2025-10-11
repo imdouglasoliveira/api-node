@@ -12,6 +12,7 @@ API simples em Node.js + TypeScript usando Fastify, Drizzle ORM (SQLite) e Zod. 
 - **Drizzle ORM + SQLite** - ORM moderno e type-safe com banco embarcado
 - **Zod** - Validação de dados
 - **Swagger/OpenAPI + Scalar API Reference** (em `/docs` quando `NODE_ENV=development`)
+- **Vitest + Supertest** - Testes E2E com 27 testes cobrindo todas as rotas
 - **tsx** - Executor TypeScript para desenvolvimento
 - **pino-pretty** - Logger formatado para desenvolvimento
 
@@ -164,8 +165,19 @@ api-node/
 │   │       └── enrollments.http  # Exemplos de requisições de matrículas
 │   ├── routes/           # Rotas da API
 │   │   ├── courses/      # Rotas de cursos (get, create, get-by-id)
+│   │   │   └── __tests__ # Testes E2E (11 testes)
 │   │   ├── users/        # Rotas de usuários (get, create, get-by-id)
+│   │   │   └── __tests__ # Testes E2E (11 testes)
 │   │   └── enrollments/  # Rotas de matrículas (get, create, get-by-ids)
+│   │       └── __tests__ # Testes E2E (11 testes)
+│   ├── tests/            # Utilitários de teste
+│   │   ├── factories/    # Factories para criar dados de teste
+│   │   │   ├── make-course.ts
+│   │   │   ├── make-user.ts
+│   │   │   └── make-enrollment.ts
+│   │   └── utils/        # Mocks e helpers de teste
+│   │       ├── mocks/    # Geradores de dados fake
+│   │       └── database.ts # Utilitário cleanDatabase
 │   └── scripts/          # Scripts utilitários
 │       ├── database/     # Scripts de gerenciamento do banco
 │       │   ├── index.js          # Exportações
@@ -216,6 +228,12 @@ Tabelas principais definidas em `src/database/schema.ts`:
 ### Desenvolvimento
 - `npm run dev`: inicia o servidor com reload e carrega variáveis de `.env`
 - `npm run drizzle:studio`: abre o Drizzle Studio
+
+### Testes
+- `npm test`: executa todos os 27 testes E2E
+- `npm run test:watch`: executa testes em modo watch
+- `npm run test:ui`: abre interface gráfica do Vitest
+- `npm run test:coverage`: gera relatório de cobertura de testes
 
 ### Migrações
 - `npm run migrate:generate`: gera artefatos do Drizzle a partir do schema
@@ -287,6 +305,47 @@ sequenceDiagram
   else não encontrado
     S-->>C: 404
   end
+```
+
+## Testes E2E
+
+### Estrutura dos Testes
+O projeto possui 27 testes E2E organizados por recurso:
+- **Courses**: 11 testes (paginação, busca, validação, timestamps)
+- **Users**: 11 testes (paginação, busca, validação, email único)
+- **Enrollments**: 11 testes (filtros, joins, foreign keys)
+
+### Padrão de Testes
+```typescript
+// Usando factories (recomendado para testes by-id)
+const course = await makeCourse()
+const user = await makeUser({ email: "custom@email.com" })
+const enrollment = await makeEnrollment({ user_id: user.id, course_id: course.id })
+
+// Usando mocks (quando não precisa inserir no banco)
+const mockCourse = generateCourseMock()
+await db.insert(courses).values(mockCourse)
+```
+
+### Isolamento de Testes
+Cada teste é isolado com:
+- `beforeEach(() => cleanDatabase())` - Limpa todas as tabelas
+- `beforeAll()` - Inicia servidor único
+- `afterAll()` - Fecha servidor
+
+### Executar Testes
+```bash
+# Todos os testes
+npm test
+
+# Modo watch (desenvolvimento)
+npm run test:watch
+
+# Interface gráfica
+npm run test:ui
+
+# Cobertura
+npm run test:coverage
 ```
 
 ## Dicas e solução de problemas

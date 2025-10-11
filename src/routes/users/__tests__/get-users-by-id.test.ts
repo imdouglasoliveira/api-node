@@ -2,7 +2,7 @@ import { test, expect, beforeAll, afterAll, beforeEach } from 'vitest'
 import request from 'supertest'
 import { startServer } from '../../../app.ts'
 import type { FastifyInstance } from 'fastify'
-import { makeCourse } from '../../../tests/factories/make-course.ts'
+import { makeUser } from '../../../tests/factories/make-user.ts'
 import { cleanDatabase } from '../../../tests/utils/database.ts'
 
 let app: FastifyInstance
@@ -21,52 +21,53 @@ afterAll(async () => {
     await app.close()
 })
 
-test('GET /courses/:id should return course by id', async () => {
-    // Create a course using factory
-    const course = await makeCourse()
+test('GET /users/:id should return user by id', async () => {
+    // Create a user using factory
+    const user = await makeUser()
 
     const response = await request(app.server)
-        .get(`/courses/${course.id}`)
+        .get(`/users/${user.id}`)
         .expect(200)
 
     expect(response.body).toEqual({
-        course: {
-            id: course.id,
-            title: course.title,
-            description: course.description,
+        user: {
+            id: user.id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
             created_at: expect.any(Number),
             updated_at: expect.any(Number)
         }
     })
 })
 
-test('GET /courses/:id should return 404 when course does not exist', async () => {
+test('GET /users/:id should return 404 when user does not exist', async () => {
     const response = await request(app.server)
-        .get('/courses/99999')
+        .get('/users/99999')
         .expect(404)
 
     expect(response.body).toEqual({})
 })
 
-test('GET /courses/:id should validate id param', async () => {
+test('GET /users/:id should validate id param', async () => {
     const response = await request(app.server)
-        .get('/courses/invalid-id')
+        .get('/users/invalid-id')
         .expect(400)
 
     expect(response.body).toHaveProperty('message')
 })
 
-test('GET /courses/:id should return correct timestamps', async () => {
-    // Create a course using factory
-    const course = await makeCourse()
+test('GET /users/:id should return correct timestamps', async () => {
+    // Create a user using factory
+    const user = await makeUser()
 
     const response = await request(app.server)
-        .get(`/courses/${course.id}`)
+        .get(`/users/${user.id}`)
         .expect(200)
 
     // Verify timestamps are valid numbers
-    expect(response.body.course.created_at).toBeGreaterThan(0)
-    expect(response.body.course.updated_at).toBeGreaterThan(0)
-    expect(typeof response.body.course.created_at).toBe('number')
-    expect(typeof response.body.course.updated_at).toBe('number')
+    expect(response.body.user.created_at).toBeGreaterThan(0)
+    expect(response.body.user.updated_at).toBeGreaterThan(0)
+    expect(typeof response.body.user.created_at).toBe('number')
+    expect(typeof response.body.user.updated_at).toBe('number')
 })

@@ -3,13 +3,15 @@ import { enrollments } from '../../database/schema.ts'
 import { makeUser } from './make-user.ts'
 import { makeCourse } from './make-course.ts'
 
+// Mock interface for enrollment
 interface MakeEnrollmentOptions {
     user_id?: number
     course_id?: number
 }
 
+// Generate a mock enrollment
 export async function makeEnrollment(overrides?: MakeEnrollmentOptions) {
-    // Se não fornecer user_id ou course_id, cria automaticamente
+    // If user_id or course_id is not provided, create automatically
     const userId = overrides?.user_id ?? (await makeUser()).id
     const courseId = overrides?.course_id ?? (await makeCourse()).id
 

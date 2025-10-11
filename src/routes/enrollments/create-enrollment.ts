@@ -13,14 +13,14 @@ export const createEnrollmentRoute: FastifyPluginAsyncZod = async (server) => {
             body: z.union([
                 // For a single enrollment
                 z.object({
-                    user_id: z.number().int().positive('ID do usuário deve ser positivo'),
-                    course_id: z.number().int().positive('ID do curso deve ser positivo')
+                    user_id: z.number().int().positive('User ID must be positive'),
+                    course_id: z.number().int().positive('Course ID must be positive')
                 }),
                 // For multiple enrollments
                 z.array(z.object({
-                    user_id: z.number().int().positive('ID do usuário deve ser positivo'),
-                    course_id: z.number().int().positive('ID do curso deve ser positivo')
-                })).min(1, 'Array não pode estar vazio').max(100, 'Máximo 100 matrículas por vez')
+                    user_id: z.number().int().positive('User ID must be positive'),
+                    course_id: z.number().int().positive('Course ID must be positive')
+                })).min(1, 'Array cannot be empty').max(100, 'Maximum 100 enrollments at once')
             ]),
             response: {
                 201: z.union([
@@ -31,7 +31,7 @@ export const createEnrollmentRoute: FastifyPluginAsyncZod = async (server) => {
                             course_id: z.number(),
                             created_at: z.number(),
                             updated_at: z.number()
-                        }).describe('Matrícula criada com sucesso - única matrícula')
+                        }).describe('Enrollment created successfully - single enrollment')
                     }),
                     z.object({
                         success: z.boolean(),
@@ -43,12 +43,12 @@ export const createEnrollmentRoute: FastifyPluginAsyncZod = async (server) => {
                                 updated_at: z.number()
                             })),
                             total: z.number()
-                        }).describe('Matrículas criadas com sucesso - múltiplas matrículas')
+                        }).describe('Enrollments created successfully - multiple enrollments')
                     })
                 ]),
                 500: z.object({
                     error: z.string()
-                }).describe('Erro interno do servidor')
+                }).describe('Internal server error')
             }
         }
     }, async (request, reply) => {
@@ -82,8 +82,8 @@ export const createEnrollmentRoute: FastifyPluginAsyncZod = async (server) => {
                 })
             } catch (error) {
                 const errorMessage = error instanceof Error ? error.message : String(error);
-                server.log.error(`Erro ao criar matrículas: ${errorMessage}`);
-                return reply.status(500).send({ error: 'Erro ao criar matrículas' })
+                server.log.error(`Error creating enrollments: ${errorMessage}`);
+                return reply.status(500).send({ error: 'Error creating enrollments' })
             }
 
         } else {

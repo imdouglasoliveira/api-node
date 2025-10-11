@@ -1,0 +1,48 @@
+### Create Course - Single ###
+
+# POST to create a new course
+POST http://localhost:3333/courses HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Cursor AI",
+  "description": "Cursor AI is an intelligent code editor"
+}
+
+###
+
+# POST to create a course with null description
+POST http://localhost:3333/courses HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "JavaScript Fundamentals",
+  "description": null
+}
+
+###
+
+# POST to create a course without description
+POST http://localhost:3333/courses HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "TypeScript Advanced"
+}
+
+### Create Course - Bulk ###
+
+# POST to create multiple courses
+POST http://localhost:3333/courses HTTP/1.1
+Content-Type: application/json
+
+[
+  { "title": "Crewai", "description": "Crewai is an AI framework for app development" },
+  { "title": "Multi-agent with Crewai", "description": "Creating Multi Agent Systems with CrewAI" },
+  { "title": "MCPs", "description": "MCPs are communication interfaces for AI" },
+  { "title": "Deploy with Crewai", "description": "Deploying applications with CrewAI" },
+  { "title": "Creating agents with Agno" },
+  { "title": "Soft Skills" },
+  { "title": "Desktop Apps with Electron" },
+  { "title": "Accessibility with ReactJS" }
+]

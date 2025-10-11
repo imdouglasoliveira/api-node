@@ -13,16 +13,16 @@ export const createUserRoute: FastifyPluginAsyncZod = async (server) => {
             body: z.union([
                 // For a single user
                 z.object({
-                    first_name: z.string().min(1, 'Nome é obrigatório').max(100, 'Nome muito longo'),
-                    last_name: z.string().min(1, 'Sobrenome é obrigatório').max(100, 'Sobrenome muito longo'),
-                    email: z.string().email('Email inválido').min(1, 'Email é obrigatório').max(100, 'Email muito longo')
+                    first_name: z.string().min(1, 'First name is required').max(100, 'First name too long'),
+                    last_name: z.string().min(1, 'Last name is required').max(100, 'Last name too long'),
+                    email: z.string().email('Invalid email').min(1, 'Email is required').max(100, 'Email too long')
                 }),
                 // For multiple users
                 z.array(z.object({
-                    first_name: z.string().min(1, 'Nome é obrigatório').max(100, 'Nome muito longo'),
-                    last_name: z.string().min(1, 'Sobrenome é obrigatório').max(100, 'Sobrenome muito longo'),
-                    email: z.string().email('Email inválido').min(1, 'Email é obrigatório').max(100, 'Email muito longo')
-                })).min(1, 'Array não pode estar vazio').max(50, 'Máximo 50 usuários por vez')
+                    first_name: z.string().min(1, 'First name is required').max(100, 'First name too long'),
+                    last_name: z.string().min(1, 'Last name is required').max(100, 'Last name too long'),
+                    email: z.string().email('Invalid email').min(1, 'Email is required').max(100, 'Email too long')
+                })).min(1, 'Array cannot be empty').max(50, 'Maximum 50 users at once')
             ]),
             response: {
                 201: z.union([
@@ -35,7 +35,7 @@ export const createUserRoute: FastifyPluginAsyncZod = async (server) => {
                             email: z.string(),
                             created_at: z.number(),
                             updated_at: z.number()
-                        }).describe('Usuário criado com sucesso - único usuário')
+                        }).describe('User created successfully - single user')
                     }),
                     z.object({
                         success: z.boolean(),
@@ -49,12 +49,12 @@ export const createUserRoute: FastifyPluginAsyncZod = async (server) => {
                                 updated_at: z.number()
                             })),
                             total: z.number()
-                        }).describe('Usuários criados com sucesso - múltiplos usuários')
+                        }).describe('Users created successfully - multiple users')
                     })
                 ]),
                 500: z.object({
                     error: z.string()
-                }).describe('Erro interno do servidor')
+                }).describe('Internal server error')
             }
         }
     }, async (request, reply) => {
@@ -91,8 +91,8 @@ export const createUserRoute: FastifyPluginAsyncZod = async (server) => {
                 })
             } catch (error) {
                 const errorMessage = error instanceof Error ? error.message : String(error);
-                server.log.error(`Erro ao criar usuários: ${errorMessage}`);
-                return reply.status(500).send({ error: 'Erro ao criar usuários' })
+                server.log.error(`Error creating users: ${errorMessage}`);
+                return reply.status(500).send({ error: 'Error creating users' })
             }
 
         } else {

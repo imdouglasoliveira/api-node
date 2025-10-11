@@ -1,6 +1,6 @@
-
 import { fakerPT_BR as faker } from '@faker-js/faker';
 
+// Mock interface for enrollment
 export interface EnrollmentMock {
     id?: number;
     user_id: number;
@@ -9,6 +9,7 @@ export interface EnrollmentMock {
     updated_at?: number;
 }
 
+// Generate a mock enrollment
 export function generateEnrollmentMock(userId: number, courseId: number, id?: number): EnrollmentMock {
     return {
         id: id,
@@ -19,6 +20,7 @@ export function generateEnrollmentMock(userId: number, courseId: number, id?: nu
     };
 }
 
+// Generate multiple mock enrollments
 export function generateEnrollmentMocks(count: number, userIds: number[], courseIds: number[]): EnrollmentMock[] {
     const enrollments: EnrollmentMock[] = [];
     for (let i = 0; i < count; i++) {

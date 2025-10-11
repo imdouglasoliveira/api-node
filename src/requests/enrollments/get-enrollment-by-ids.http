@@ -1,0 +1,44 @@
+### Get Enrollment by User ID and Course ID ###
+
+# GET to fetch enrollment by user_id and course_id (User 1, Course 1)
+GET http://localhost:3333/enrollments/1/1 HTTP/1.1
+
+###
+
+# GET to fetch enrollment by user_id and course_id (User 1, Course 2)
+GET http://localhost:3333/enrollments/1/2 HTTP/1.1
+
+###
+
+# GET to fetch enrollment by user_id and course_id (User 2, Course 1)
+GET http://localhost:3333/enrollments/2/1 HTTP/1.1
+
+###
+
+# GET to fetch enrollment by user_id and course_id (User 3, Course 5)
+GET http://localhost:3333/enrollments/3/5 HTTP/1.1
+
+### Error Cases ###
+
+# GET enrollment with non-existent combination (should return 404)
+GET http://localhost:3333/enrollments/9999/9999 HTTP/1.1
+
+###
+
+# GET enrollment with invalid user_id (should return 400)
+GET http://localhost:3333/enrollments/invalid/1 HTTP/1.1
+
+###
+
+# GET enrollment with invalid course_id (should return 400)
+GET http://localhost:3333/enrollments/1/invalid HTTP/1.1
+
+###
+
+# GET enrollment with negative user_id (should return 400)
+GET http://localhost:3333/enrollments/-1/1 HTTP/1.1
+
+###
+
+# GET enrollment with negative course_id (should return 400)
+GET http://localhost:3333/enrollments/1/-1 HTTP/1.1

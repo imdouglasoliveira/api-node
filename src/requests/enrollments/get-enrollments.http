@@ -1,0 +1,64 @@
+### Get All Enrollments ###
+
+# GET to fetch all enrollments
+GET http://localhost:3333/enrollments HTTP/1.1
+
+### Get Enrollments - Pagination ###
+
+# GET to fetch enrollments with pagination (page 1, default limit)
+GET http://localhost:3333/enrollments?page=1 HTTP/1.1
+
+###
+
+# GET to fetch enrollments with pagination (page 2, limit 5)
+GET http://localhost:3333/enrollments?page=2&limit=5 HTTP/1.1
+
+###
+
+# GET to fetch enrollments with pagination (page 1, limit 10)
+GET http://localhost:3333/enrollments?page=1&limit=10 HTTP/1.1
+
+### Get Enrollments - Filter by User ###
+
+# GET to fetch enrollments by user_id (User 1)
+GET http://localhost:3333/enrollments?user_id=1 HTTP/1.1
+
+###
+
+# GET to fetch enrollments by user_id (User 2)
+GET http://localhost:3333/enrollments?user_id=2 HTTP/1.1
+
+###
+
+# GET enrollments by user_id with pagination
+GET http://localhost:3333/enrollments?user_id=1&page=1&limit=5 HTTP/1.1
+
+### Get Enrollments - Filter by Course ###
+
+# GET to fetch enrollments by course_id (Course 1)
+GET http://localhost:3333/enrollments?course_id=1 HTTP/1.1
+
+###
+
+# GET to fetch enrollments by course_id (Course 3)
+GET http://localhost:3333/enrollments?course_id=3 HTTP/1.1
+
+###
+
+# GET enrollments by course_id with pagination
+GET http://localhost:3333/enrollments?course_id=1&page=1&limit=5 HTTP/1.1
+
+### Get Enrollments - Combined Filters ###
+
+# GET enrollments by user_id and course_id
+GET http://localhost:3333/enrollments?user_id=1&course_id=1 HTTP/1.1
+
+###
+
+# GET with all filters (user, course, pagination)
+GET http://localhost:3333/enrollments?user_id=1&course_id=2&page=1&limit=10 HTTP/1.1
+
+###
+
+# GET by enrollment id directly
+GET http://localhost:3333/enrollments?id=1 HTTP/1.1

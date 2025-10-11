@@ -12,7 +12,7 @@ export const getUsersByIdRoute: FastifyPluginAsyncZod = async (server) => {
             summary: 'Get user by ID',
             description: 'Get a specific user by ID',
             params: z.object({
-                id: z.string().regex(/^\d+$/, 'ID do usuário deve ser um número'),
+                id: z.string().regex(/^\d+$/, 'User ID must be a number'),
             }),
             response: {
                 200: z.object({

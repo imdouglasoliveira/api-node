@@ -1,0 +1,101 @@
+### Create Enrollment - Single ###
+
+# POST to create a new enrollment (User 1 in Course 1)
+POST http://localhost:3333/enrollments HTTP/1.1
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "course_id": 1
+}
+
+###
+
+# POST to create another enrollment (User 2 in Course 3)
+POST http://localhost:3333/enrollments HTTP/1.1
+Content-Type: application/json
+
+{
+  "user_id": 2,
+  "course_id": 3
+}
+
+###
+
+# POST to create enrollment (User 1 in Course 5)
+POST http://localhost:3333/enrollments HTTP/1.1
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "course_id": 5
+}
+
+### Create Enrollment - Bulk ###
+
+# POST to create multiple enrollments
+POST http://localhost:3333/enrollments HTTP/1.1
+Content-Type: application/json
+
+[
+  { "user_id": 1, "course_id": 2 },
+  { "user_id": 1, "course_id": 3 },
+  { "user_id": 2, "course_id": 1 },
+  { "user_id": 2, "course_id": 2 },
+  { "user_id": 3, "course_id": 1 },
+  { "user_id": 3, "course_id": 4 }
+]
+
+### Error Cases ###
+
+# POST with missing user_id (should return 400)
+POST http://localhost:3333/enrollments HTTP/1.1
+Content-Type: application/json
+
+{
+  "course_id": 1
+}
+
+###
+
+# POST with missing course_id (should return 400)
+POST http://localhost:3333/enrollments HTTP/1.1
+Content-Type: application/json
+
+{
+  "user_id": 1
+}
+
+###
+
+# POST with non-existent user_id (should return 500)
+POST http://localhost:3333/enrollments HTTP/1.1
+Content-Type: application/json
+
+{
+  "user_id": 9999,
+  "course_id": 1
+}
+
+###
+
+# POST with non-existent course_id (should return 500)
+POST http://localhost:3333/enrollments HTTP/1.1
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "course_id": 9999
+}
+
+###
+
+# POST duplicate enrollment (should return 500)
+# Note: First create an enrollment, then try to create it again
+POST http://localhost:3333/enrollments HTTP/1.1
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "course_id": 1
+}

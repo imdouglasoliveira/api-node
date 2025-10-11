@@ -13,14 +13,14 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (server) => {
             body: z.union([
                 // For a single course
                 z.object({
-                    title: z.string().min(1, 'Título é obrigatório').max(100, 'Título muito longo'),
+                    title: z.string().min(1, 'Title is required').max(100, 'Title too long'),
                     description: z.string().nullable().optional()
                 }),
                 // For multiple courses
                 z.array(z.object({
-                    title: z.string().min(1, 'Título é obrigatório').max(100, 'Título muito longo'),
+                    title: z.string().min(1, 'Title is required').max(100, 'Title too long'),
                     description: z.string().nullable().optional()
-                })).min(1, 'Array não pode estar vazio').max(50, 'Máximo 50 cursos por vez')
+                })).min(1, 'Array cannot be empty').max(50, 'Maximum 50 courses at once')
             ]),
             response: {
                 201: z.union([
@@ -32,7 +32,7 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (server) => {
                             description: z.string().nullable(),
                             created_at: z.number(),
                             updated_at: z.number()
-                        }).describe('Curso criado com sucesso - único curso')
+                        }).describe('Course created successfully - single course')
                     }),
                     z.object({
                         success: z.boolean(),
@@ -45,12 +45,12 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (server) => {
                                 updated_at: z.number()
                             })),
                             total: z.number()
-                        }).describe('Cursos criados com sucesso - múltiplos cursos')
+                        }).describe('Courses created successfully - multiple courses')
                     })
                 ]),
                 500: z.object({
                     error: z.string()
-                }).describe('Erro interno do servidor')
+                }).describe('Internal server error')
             }
         }
     }, async (request, reply) => {
@@ -85,8 +85,8 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (server) => {
                 })
             } catch (error) {
                 const errorMessage = error instanceof Error ? error.message : String(error);
-                server.log.error(`Erro ao criar cursos: ${errorMessage}`);
-                return reply.status(500).send({ error: 'Erro ao criar cursos' })
+                server.log.error(`Error creating courses: ${errorMessage}`);
+                return reply.status(500).send({ error: 'Error creating courses' })
             }
 
         } else {
@@ -112,8 +112,8 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (server) => {
                 })
             } catch (error) {
                 const errorMessage = error instanceof Error ? error.message : String(error);
-                server.log.error(`Erro ao criar curso: ${errorMessage}`);
-                return reply.status(500).send({ error: 'Erro ao criar curso' })
+                server.log.error(`Error creating course: ${errorMessage}`);
+                return reply.status(500).send({ error: 'Error creating course' })
             }
         }
     })

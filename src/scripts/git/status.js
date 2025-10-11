@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
 /**
- * Script de Status do Git
- * 
- * Este script mostra o status detalhado do repositório Git:
- * - Branch atual
- * - Status das alterações
- * - Últimos commits
- * - Status das branches remotas
- * 
- * Uso: node src/scripts/git/status.js
+ * Git Status Script
+ *
+ * This script shows detailed status of the Git repository:
+ * - Current branch
+ * - Change status
+ * - Last commits
+ * - Remote branch status
+ *
+ * Usage: node src/scripts/git/status.js
  */
 
 import { execSync } from 'child_process';
@@ -19,7 +19,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Cores para output
+// Colors for output
 const colors = {
     reset: '\x1b[0m',
     bright: '\x1b[1m',
@@ -37,8 +37,8 @@ function log(message, color = 'reset') {
 
 function execCommand(command) {
     try {
-        return execSync(command, { 
-            encoding: 'utf8', 
+        return execSync(command, {
+            encoding: 'utf8',
             stdio: 'pipe',
             cwd: process.cwd()
         }).trim();
@@ -70,7 +70,7 @@ function getRemoteStatus() {
 function getUncommittedChanges() {
     const status = getGitStatus();
     if (!status) return [];
-    
+
     return status.split('\n').map(line => {
         const status = line.substring(0, 2);
         const file = line.substring(3);
@@ -80,49 +80,49 @@ function getUncommittedChanges() {
 
 function formatFileStatus(status) {
     const statusMap = {
-        'M ': 'Modificado',
-        'A ': 'Adicionado',
-        'D ': 'Deletado',
-        'R ': 'Renomeado',
-        'C ': 'Copiado',
-        'U ': 'Não mesclado',
-        '??': 'Não rastreado',
-        '!!': 'Ignorado'
+        'M ': 'Modified',
+        'A ': 'Added',
+        'D ': 'Deleted',
+        'R ': 'Renamed',
+        'C ': 'Copied',
+        'U ': 'Unmerged',
+        '??': 'Untracked',
+        '!!': 'Ignored'
     };
-    
+
     return statusMap[status] || status;
 }
 
 function main() {
-    log('📊 Status do Repositório Git', 'bright');
+    log('📊 Git Repository Status', 'bright');
     log('=' .repeat(50), 'cyan');
-    
-    // Branch atual
+
+    // Current branch
     const currentBranch = getCurrentBranch();
-    log(`\n🌿 Branch atual: ${currentBranch}`, 'green');
-    
-    // Status das alterações
+    log(`\n🌿 Current branch: ${currentBranch}`, 'green');
+
+    // Change status
     const changes = getUncommittedChanges();
     if (changes.length > 0) {
-        log('\n📝 Alterações não commitadas:', 'yellow');
+        log('\n📝 Uncommitted changes:', 'yellow');
         changes.forEach(change => {
             const status = formatFileStatus(change.status);
             log(`   ${change.status} ${change.file} (${status})`, 'cyan');
         });
     } else {
-        log('\n✅ Nenhuma alteração pendente', 'green');
+        log('\n✅ No pending changes', 'green');
     }
-    
-    // Últimos commits
+
+    // Last commits
     const lastCommits = getLastCommits();
     if (lastCommits) {
-        log('\n📋 Últimos commits:', 'blue');
+        log('\n📋 Last commits:', 'blue');
         lastCommits.split('\n').forEach(commit => {
             log(`   ${commit}`, 'cyan');
         });
     }
-    
-    // Status das branches
+
+    // Branch status
     const branchStatus = getBranchStatus();
     if (branchStatus) {
         log('\n🌿 Branches:', 'magenta');
@@ -132,33 +132,33 @@ function main() {
             log(`   ${branch}`, color);
         });
     }
-    
-    // Status remoto
+
+    // Remote status
     const remoteStatus = getRemoteStatus();
     if (remoteStatus) {
-        log('\n🌐 Remotos:', 'blue');
+        log('\n🌐 Remotes:', 'blue');
         remoteStatus.split('\n').forEach(remote => {
             log(`   ${remote}`, 'cyan');
         });
     }
-    
-    // Resumo
+
+    // Summary
     log('\n' + '=' .repeat(50), 'cyan');
-    log(`📊 Resumo:`, 'bright');
+    log(`📊 Summary:`, 'bright');
     log(`   Branch: ${currentBranch}`, 'cyan');
-    log(`   Alterações: ${changes.length} arquivo(s)`, 'cyan');
-    log(`   Status: ${changes.length > 0 ? 'Há alterações pendentes' : 'Tudo limpo'}`, 
+    log(`   Changes: ${changes.length} file(s)`, 'cyan');
+    log(`   Status: ${changes.length > 0 ? 'Pending changes' : 'All clean'}`,
          changes.length > 0 ? 'yellow' : 'green');
-    
+
     if (changes.length > 0) {
-        log('\n💡 Próximos passos:', 'bright');
-        log('   1. git add . (adicionar arquivos)', 'cyan');
-        log('   2. git commit -m "sua mensagem" (fazer commit)', 'cyan');
-        log('   3. npm run deploy "sua mensagem" (deploy automático)', 'cyan');
+        log('\n💡 Next steps:', 'bright');
+        log('   1. git add . (add files)', 'cyan');
+        log('   2. git commit -m "your message" (make commit)', 'cyan');
+        log('   3. npm run deploy "your message" (automated deploy)', 'cyan');
     }
 }
 
-// Executar sempre
+// Always execute
 main();
 
 export { main as status };

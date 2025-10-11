@@ -2,79 +2,79 @@ import { drizzle } from 'drizzle-orm/better-sqlite3';
 import Database from 'better-sqlite3';
 import fs from 'fs';
 
-// Função para verificar status do banco SQLite
+// Function to check status of SQLite database
 function checkDatabaseStatus() {
-    console.log('🔍 Verificando status do banco SQLite...\n');
-    
+    console.log('🔍 Checking SQLite database status...\n');
+
     try {
-        // Verificar se o arquivo do banco existe
-        console.log('📦 Verificando arquivo do banco...');
+        // Check if the database file exists
+        console.log('📦 Checking database file...');
         if (!fs.existsSync('./src/database/dev.db')) {
-            console.log('❌ Arquivo dev.db não encontrado');
-            console.log('💡 Execute: npm run migrate');
+            console.log('❌ dev.db file not found');
+            console.log('💡 Run: npm run migrate');
             return false;
         }
-        
-        console.log('✅ Arquivo do banco encontrado\n');
-        
-        // Conectar ao banco SQLite
-        console.log('🔌 Testando conexão com o banco...');
+
+        console.log('✅ Database file found\n');
+
+        // Connect to SQLite database
+        console.log('🔌 Testing database connection...');
         const sqlite = new Database('./src/database/dev.db');
         const db = drizzle(sqlite);
-        
-        // Verificar versão do SQLite
+
+        // Check SQLite version
         const version = sqlite.prepare('SELECT sqlite_version() as version').get();
-        console.log(`✅ Conexão com SQLite funcionando (versão: ${version.version})\n`);
-        
-        // Listar tabelas
-        console.log('📋 Tabelas no banco:');
+        console.log(`✅ SQLite connection working (version: ${version.version})\n`);
+
+        // List tables
+        console.log('📋 Tables in database:');
         const tables = sqlite.prepare(`
-            SELECT name FROM sqlite_master 
+            SELECT name FROM sqlite_master
             WHERE type='table' AND name NOT LIKE 'sqlite_%'
         `).all();
-        
+
         if (tables.length === 0) {
-            console.log('ℹ️  Nenhuma tabela encontrada');
+            console.log('ℹ️  No tables found');
         } else {
             tables.forEach(table => {
                 console.log(`  - ${table.name}`);
             });
         }
         console.log();
-        
-        // Verificar migrações aplicadas
-        console.log('📝 Migrações aplicadas:');
+
+        // Check applied migrations
+        console.log('📝 Applied migrations:');
         try {
             const migrations = sqlite.prepare(`
-                SELECT * FROM __drizzle_migrations 
+                SELECT * FROM __drizzle_migrations
                 ORDER BY created_at
             `).all();
-            
+
             if (migrations.length === 0) {
-                console.log('ℹ️  Nenhuma migração encontrada');
+                console.log('ℹ️  No migrations found');
             } else {
                 migrations.forEach(migration => {
                     console.log(`  - ${migration.hash} (${migration.created_at})`);
                 });
             }
         } catch (error) {
-            console.log('ℹ️  Tabela de migrações não encontrada ou vazia');
+            console.log('ℹ️  Migrations table not found or empty');
         }
-        
+
         sqlite.close();
-        
-        console.log('\n🎉 Banco SQLite está funcionando corretamente!');
+
+        console.log('\n🎉 SQLite database is working correctly!');
         return true;
-        
+
     } catch (error) {
-        console.error('❌ Erro ao verificar banco de dados:', error.message);
-        console.log('\n💡 Soluções possíveis:');
-        console.log('1. Execute: npm run migrate');
-        console.log('2. Verifique se o arquivo dev.db não está corrompido');
-        console.log('3. Execute: npm run db:reset');
+        console.error('❌ Error checking database:', error.message);
+        console.log('\n💡 Possible solutions:');
+        console.log('1. Run: npm run migrate');
+        console.log('2. Check if the dev.db file is not corrupted');
+        console.log('3. Run: npm run db:reset');
         return false;
     }
 }
 
-// Executar verificação
+// Execute verification
 checkDatabaseStatus();

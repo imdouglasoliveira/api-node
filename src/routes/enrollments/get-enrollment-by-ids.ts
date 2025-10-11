@@ -12,8 +12,8 @@ export const getEnrollmentByIdsRoute: FastifyPluginAsyncZod = async (server) => 
             summary: 'Get enrollment by user_id and course_id',
             description: 'Get a specific enrollment by user_id and course_id',
             params: z.object({
-                user_id: z.string().regex(/^\d+$/, 'ID do usuário deve ser um número'),
-                course_id: z.string().regex(/^\d+$/, 'ID do curso deve ser um número')
+                user_id: z.string().regex(/^\d+$/, 'User ID must be a number'),
+                course_id: z.string().regex(/^\d+$/, 'Course ID must be a number')
             }),
             response: {
                 200: z.object({

@@ -7,45 +7,45 @@ const __dirname = path.dirname(__filename);
 
 const DB_PATH = path.join(__dirname, '../../database/dev.db');
 
-// Tabelas disponíveis
+// Available tables
 const AVAILABLE_TABLES = ['users', 'courses', 'enrollments'];
 
 function resetTable(tableName) {
-    console.log(`🗑️  Resetando tabela: ${tableName}`);
+    console.log(`🗑️  Resetting table: ${tableName}`);
 
     try {
         const sqlite = new Database(DB_PATH);
 
-        // Deletar todos os registros
+        // Delete all records
         const deleteStmt = sqlite.prepare(`DELETE FROM ${tableName}`);
         const result = deleteStmt.run();
 
-        // Resetar o autoincrement (SQLite)
+        // Reset the autoincrement (SQLite)
         const resetStmt = sqlite.prepare(`DELETE FROM sqlite_sequence WHERE name = ?`);
         resetStmt.run(tableName);
 
-        console.log(`✅ Tabela ${tableName} resetada com sucesso!`);
-        console.log(`   Registros deletados: ${result.changes}`);
+        console.log(`✅ Table ${tableName} reset successfully!`);
+        console.log(`   Records deleted: ${result.changes}`);
 
         sqlite.close();
 
     } catch (error) {
-        console.error(`❌ Erro ao resetar tabela ${tableName}:`, error.message);
+        console.error(`❌ Error resetting table ${tableName}:`, error.message);
         process.exit(1);
     }
 }
 
 function resetAllTables() {
-    console.log('🗑️  Resetando TODAS as tabelas...\n');
+    console.log('🗑️  Resetting ALL tables...\n');
 
     AVAILABLE_TABLES.forEach(table => {
         resetTable(table);
     });
 
-    console.log('\n🎉 Todas as tabelas foram resetadas!');
+    console.log('\n🎉 All tables have been reset!');
 }
 
-// Processar argumentos da linha de comando
+// Process arguments from the command line
 function main() {
     const args = process.argv.slice(2);
 
@@ -57,12 +57,12 @@ function main() {
     const tableName = args[0];
 
     if (!AVAILABLE_TABLES.includes(tableName)) {
-        console.error(`❌ Tabela inválida: ${tableName}`);
-        console.log(`\nTabelas disponíveis: ${AVAILABLE_TABLES.join(', ')}`);
-        console.log('\nUso:');
-        console.log('  node reset-table.js [tabela]');
-        console.log('  node reset-table.js all  (reseta todas as tabelas)');
-        console.log('\nExemplos:');
+        console.error(`❌ Invalid table: ${tableName}`);
+        console.log(`\nAvailable tables: ${AVAILABLE_TABLES.join(', ')}`);
+        console.log('\nUsage:');
+        console.log('  node reset-table.js [table]');
+        console.log('  node reset-table.js all  (reset all tables)');
+        console.log('\nExamples:');
         console.log('  node reset-table.js users');
         console.log('  node reset-table.js courses');
         console.log('  node reset-table.js all');

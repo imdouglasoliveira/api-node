@@ -1,0 +1,49 @@
+### Get All Courses ###
+
+# GET to fetch all courses
+GET http://localhost:3333/courses HTTP/1.1
+
+### Get Courses - Pagination ###
+
+# GET to fetch courses with pagination (page 1, default limit)
+GET http://localhost:3333/courses?page=1 HTTP/1.1
+
+###
+
+# GET to fetch courses with pagination (page 2, limit 5)
+GET http://localhost:3333/courses?page=2&limit=5 HTTP/1.1
+
+###
+
+# GET to fetch courses with pagination (page 1, limit 10)
+GET http://localhost:3333/courses?page=1&limit=10 HTTP/1.1
+
+### Get Courses - Search ###
+
+# GET to search courses by title
+GET http://localhost:3333/courses?search=Crewai HTTP/1.1
+
+###
+
+# GET to search courses (case insensitive)
+GET http://localhost:3333/courses?search=javascript HTTP/1.1
+
+###
+
+# GET to search courses with pagination
+GET http://localhost:3333/courses?search=AI&page=1&limit=5 HTTP/1.1
+
+### Get Courses - Ordering ###
+
+# GET to fetch courses ordered by title
+GET http://localhost:3333/courses?orderBy=title HTTP/1.1
+
+###
+
+# GET to search and order courses
+GET http://localhost:3333/courses?search=Crewai&orderBy=title HTTP/1.1
+
+### Get Courses - Combined Filters ###
+
+# GET with search, order and pagination
+GET http://localhost:3333/courses?search=AI&orderBy=title&page=1&limit=3 HTTP/1.1

@@ -1,0 +1,54 @@
+### Get All Users ###
+
+# GET to fetch all users
+GET http://localhost:3333/users HTTP/1.1
+
+### Get Users - Pagination ###
+
+# GET to fetch users with pagination (page 1, default limit)
+GET http://localhost:3333/users?page=1 HTTP/1.1
+
+###
+
+# GET to fetch users with pagination (page 2, limit 5)
+GET http://localhost:3333/users?page=2&limit=5 HTTP/1.1
+
+###
+
+# GET to fetch users with pagination (page 1, limit 10)
+GET http://localhost:3333/users?page=1&limit=10 HTTP/1.1
+
+### Get Users - Search ###
+
+# GET to search users by first name
+GET http://localhost:3333/users?search=joão HTTP/1.1
+
+###
+
+# GET to search users (case insensitive)
+GET http://localhost:3333/users?search=maria HTTP/1.1
+
+###
+
+# GET to search users with pagination
+GET http://localhost:3333/users?search=silva&page=1&limit=5 HTTP/1.1
+
+### Get Users - Ordering ###
+
+# GET to fetch users ordered by first_name
+GET http://localhost:3333/users?orderBy=first_name HTTP/1.1
+
+###
+
+# GET to fetch users ordered by id
+GET http://localhost:3333/users?orderBy=id HTTP/1.1
+
+###
+
+# GET to search and order users
+GET http://localhost:3333/users?search=santos&orderBy=first_name HTTP/1.1
+
+### Get Users - Combined Filters ###
+
+# GET with search, order and pagination
+GET http://localhost:3333/users?search=silva&orderBy=first_name&page=1&limit=3 HTTP/1.1

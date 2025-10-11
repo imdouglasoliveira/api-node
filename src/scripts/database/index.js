@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
 /**
- * Script Principal do Banco de Dados
+ * Node.js Database API Main Script 
  * 
- * Este script é o ponto de entrada para todos os comandos de banco de dados.
+ * This script is the entry point for all database commands.
  * 
- * Uso: node src/scripts/database/index.js [comando] [opções]
+ * Usage: node src/scripts/database/index.js [command] [options]
  * 
- * Comandos disponíveis:
- * - migrate - Aplicar migrações
- * - check - Verificar status do banco
- * - help - Mostra esta ajuda
+ * Available commands:
+ * - migrate - Applying migrations
+ * - check - Checking status of the database
+ * - help - Show this help
  */
 
 import { execSync } from 'child_process';
@@ -20,7 +20,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Cores para output
+// Colors for output
 const colors = {
     reset: '\x1b[0m',
     bright: '\x1b[1m',
@@ -44,68 +44,68 @@ function execCommand(command, description) {
             stdio: 'pipe',
             cwd: process.cwd()
         });
-        log(`✅ ${description} concluído!`, 'green');
+        log(`✅ ${description} completed!`, 'green');
         return output;
     } catch (error) {
-        log(`❌ Erro ao executar: ${description}`, 'red');
-        log(`Comando: ${command}`, 'yellow');
-        log(`Erro: ${error.message}`, 'red');
+        log(`❌ Error executing: ${description}`, 'red');
+        log(`Command: ${command}`, 'yellow');
+        log(`Error: ${error.message}`, 'red');
         process.exit(1);
     }
 }
 
 function showHelp() {
-    log('🗄️  Scripts de Banco de Dados - API Node.js', 'bright');
+    log('🗄️  Database Scripts - API Node.js', 'bright');
     log('=' .repeat(50), 'cyan');
-    
-    log('\n📋 Comandos disponíveis:', 'green');
-    log('   migrate - Aplicar migrações do banco', 'cyan');
-    log('   seed-users [quantidade] - Popular o banco com usuários (padrão 2)', 'cyan');
-    log('   seed-courses [limite] - Popular o banco com cursos (limite opcional)', 'cyan');
-    log('   check   - Verificar status do banco', 'cyan');
-    log('   help    - Mostra esta ajuda', 'cyan');
-    
-    log('\n💡 Exemplos de uso:', 'yellow');
+
+    log('\n📋 Available commands:', 'green');
+    log('   migrate - Apply migrations to the database', 'cyan');
+    log('   seed-users [quantity] - Populate the database with users (default 2)', 'cyan');
+    log('   seed-courses [limit] - Populate the database with courses (optional limit)', 'cyan');
+    log('   check   - Check database status', 'cyan');
+    log('   help    - Show this help', 'cyan');
+
+    log('\n💡 Usage examples:', 'yellow');
     log('   npm run db:migrate', 'cyan');
     log('   npm run db:seed', 'cyan');
     log('   npm run db:seed 5', 'cyan');
     log('   npm run db:seed-courses', 'cyan');
     log('   npm run db:seed-courses 10', 'cyan');
     log('   npm run db:check', 'cyan');
-    
-    log('\n🔗 Scripts npm disponíveis:', 'green');
-    log('   npm run db:migrate      - Aplicar migrações', 'cyan');
-    log('   npm run db:seed         - Popular usuários', 'cyan');
-    log('   npm run db:seed-courses - Popular cursos', 'cyan');
-    log('   npm run db:check        - Verificar status', 'cyan');
-    log('   npm run db:setup        - Configuração inicial', 'cyan');
-    log('   npm run db:reset        - Reset do banco', 'cyan');
-    
-    log('\n📚 Documentação:', 'green');
-    log('   docs/migracoes-drizzle.md - Guia de migrações', 'cyan');
-    log('   docs/drizzle-studio-setup.md - Configuração do Studio', 'cyan');
+
+    log('\n🔗 Available npm scripts:', 'green');
+    log('   npm run db:migrate      - Apply migrations', 'cyan');
+    log('   npm run db:seed         - Populate users', 'cyan');
+    log('   npm run db:seed-courses - Populate courses', 'cyan');
+    log('   npm run db:check        - Check status', 'cyan');
+    log('   npm run db:setup        - Initial setup', 'cyan');
+    log('   npm run db:reset        - Reset database', 'cyan');
+
+    log('\n📚 Documentation:', 'green');
+    log('   docs/migracoes-drizzle.md - Migration guide', 'cyan');
+    log('   docs/drizzle-studio-setup.md - Studio configuration', 'cyan');
 }
 
 function migrate() {
-    log('🗄️  Aplicando migrações do banco...', 'bright');
-    execCommand('node src/scripts/database/apply-migration.js', 'Aplicando migrações');
+    log('🗄️  Applying migrations to the database...', 'bright');
+    execCommand('node src/scripts/database/apply-migration.js', 'Applying migrations');
 }
 
 function check() {
-    log('🔍 Verificando status do banco...', 'bright');
-    execCommand('node src/scripts/database/check-db.js', 'Verificando status');
+    log('🔍 Checking status of the database...', 'bright');
+    execCommand('node src/scripts/database/check-db.js', 'Checking status');
 }
 
 function seedUsers() {
-    log('🌱 Populando banco com usuários...', 'bright');
+    log('🌱 Populating database with users...', 'bright');
     const quantity = process.argv[3] ? parseInt(process.argv[3]) : undefined;
-    execCommand(`tsx src/database/seed-users.ts ${quantity !== undefined ? quantity : ''}`, 'Populando usuários');
+    execCommand(`tsx src/database/seed-users.ts ${quantity !== undefined ? quantity : ''}`, 'Populating users');
 }
 
 function seedCourses() {
-    log('🌱 Populando banco com cursos...', 'bright');
+    log('🌱 Populating database with courses...', 'bright');
     const limit = process.argv[3] ? parseInt(process.argv[3]) : undefined;
-    execCommand(`tsx src/database/seed-courses.ts ${limit !== undefined ? limit : ''}`, 'Populando cursos');
+    execCommand(`tsx src/database/seed-courses.ts ${limit !== undefined ? limit : ''}`, 'Populating courses');
 }
 
 function main() {
@@ -136,17 +136,17 @@ function main() {
             
         default:
             if (!command) {
-                log('❌ Nenhum comando especificado', 'red');
+                log('❌ No command specified', 'red');
             } else {
-                log(`❌ Comando desconhecido: ${command}`, 'red');
+                log(`❌ Unknown command: ${command}`, 'red');
             }
-            log('\n💡 Use "npm run db:help" para ver os comandos disponíveis', 'yellow');
+            log('\n💡 Use "npm run db:help" to see available commands', 'yellow');
             showHelp();
             process.exit(1);
     }
 }
 
-// Executar apenas se chamado diretamente
+// Execute only if called directly
 if (import.meta.url === `file://${process.argv[1]}` || import.meta.url.endsWith(process.argv[1])) {
     main();
 }

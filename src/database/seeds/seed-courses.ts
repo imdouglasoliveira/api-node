@@ -16,18 +16,18 @@ const logger = pino({
     }
 });
 
-const coursesData = [{"title":"Curso de React","description":null},{"title":"n8n","description":null},{"title":"TypeScript","description":null},{"title":"Docker","description":null},{"title":"PostgreSQL","description":null},{"title":"Next.js","description":null},{"title":"Go","description":null},{"title":"Engenharia de Prompt","description":null},{"title":"Python","description":null},{"title":"Git","description":null},{"title":"Bootstrap","description":null},{"title":"Cursor AI","description":"Cursor AI é um editor de código inteligente"},{"title":"Crewai","description":"Crewai é um framework de IA para desenvolvimento de aplicativos"},{"title":"Multi agente com Crewai","description":"Criando Multi Agent Systems com CrewAI"},{"title":"MCPs","description":"MCPs são interfaces de comunicação para IA"},{"title":"Deploy com Crewai","description":"Deploy de aplicações com CrewAI"},{"title":"Criando agentes com Agno"},{"title":"Soft Skills"},{"title":"Apps Desktop com Electron"},{"title":"Acessibilidade com ReactJS"}];
+const coursesData = [{"title":"Curso de React","description":null},{"title":"n8n","description":null},{"title":"TypeScript","description":null},{"title":"Docker","description":null},{"title":"PostgreSQL","description":null},{"title":"Next.js","description":null},{"title":"Go","description":null},{"title":"Engenharia de Prompt","description":null},{"title":"Python","description":null},{"title":"Git","description":null},{"title":"Bootstrap","description":null},{"title":"Cursor AI","description":"Cursor AI is an intelligent code editor"},{"title":"Crewai","description":"Crewai is an AI framework for application development"},{"title":"Multi agente com Crewai","description":"Creating Multi Agent Systems with CrewAI"},{"title":"MCPs","description":"MCPs are communication interfaces for AI"},{"title":"Deploy com Crewai","description":"Deploying applications with CrewAI"},{"title":"Criando agentes com Agno"},{"title":"Soft Skills"},{"title":"Apps Desktop com Electron"},{"title":"Acessibilidade com ReactJS"}];
 
 async function seed(limit?: number) {
-    logger.info(`🌱 Iniciando seed para cursos...`);
+    logger.info(`🌱 Starting seed for courses...`);
 
     let coursesToInsert = coursesData;
 
     if (limit && limit > 0 && Number.isInteger(limit)) {
         coursesToInsert = coursesToInsert.slice(0, limit);
-        logger.info(`✅ Limite de ${limit} cursos aplicado.`);
+        logger.info(`✅ Limit of ${limit} courses applied.`);
     } else if (limit !== undefined) {
-        logger.error('❌ Erro: O limite de cursos deve ser um número inteiro positivo.');
+        logger.error('❌ Error: Course limit must be a positive integer.');
         process.exit(1);
     }
 
@@ -43,17 +43,17 @@ async function seed(limit?: number) {
                 description: course.description || null
             }).returning();
             insertedCourses.push(newCourse);
-            logger.info(`✨ Curso "${newCourse.title}" criado com sucesso!`);
+            logger.info(`✨ Course "${newCourse.title}" created successfully!`);
         } else {
-            logger.warn(`⚠️  Curso "${course.title}" já existe e foi ignorado.`);
+            logger.warn(`⚠️  Course "${course.title}" already exists and was skipped.`);
             skippedCount++;
         }
     }
 
-    logger.info(`✅ Seed de cursos concluído!`);
-    logger.info(`Cursos inseridos: ${insertedCourses.length}`);
-    logger.info(`Cursos ignorados (já existentes): ${skippedCount}`);
-    //logger.info('Dados dos cursos criados:', insertedCourses);
+    logger.info(`✅ Course seed completed!`);
+    logger.info(`Courses inserted: ${insertedCourses.length}`);
+    logger.info(`Courses skipped (already existing): ${skippedCount}`);
+    //logger.info('Created courses data:', insertedCourses);
 }
 
 // Get the amount of the command line argument, if provided

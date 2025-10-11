@@ -17,12 +17,10 @@ export default defineConfig({
         testTimeout: 30000, // 30 seconds for each test
         hookTimeout: 30000, // 30 seconds for hooks (beforeAll, afterAll)
         coverage: {
-            enabled: true,
-            all: true,
+            enabled: true, // Enable coverage
             provider: 'v8',
             reporter: ['text', 'html', 'json', 'lcov'],
             reportsDirectory: './coverage',
-            include: ['src/**/*.ts'],
             exclude: [
                 'node_modules/',
                 'src/tests/**',
@@ -32,7 +30,14 @@ export default defineConfig({
                 '**/dist/**',
                 '**/coverage/**',
                 '**/__tests__/**',
-            ]
+            ],
+            // Thresholds: Bloqueia se cobertura abaixo do mínimo
+            thresholds: {
+                lines: 70,        // 70% das linhas cobertas
+                functions: 70,    // 70% das funções cobertas
+                branches: 60,     // 60% dos branches cobertos
+                statements: 70    // 70% dos statements cobertos
+            }
         }
     },
 })

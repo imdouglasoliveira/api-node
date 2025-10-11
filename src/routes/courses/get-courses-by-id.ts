@@ -12,7 +12,7 @@ export const getCourseByIdRoute: FastifyPluginAsyncZod = async (server) => {
         summary: 'Get course by ID',
         description: 'Get a specific course by ID',
         params: z.object({
-          id: z.string().regex(/^\d+$/, 'ID do curso deve ser um número'),
+          id: z.string().regex(/^\d+$/, 'Course ID must be a number'),
         }),
         response: {
           200: z.object({

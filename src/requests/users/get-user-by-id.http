@@ -1,0 +1,29 @@
+### Get User by ID ###
+
+# GET to fetch user by id (ID: 1)
+GET http://localhost:3333/users/1 HTTP/1.1
+
+###
+
+# GET to fetch user by id (ID: 5)
+GET http://localhost:3333/users/5 HTTP/1.1
+
+###
+
+# GET to fetch user by id (ID: 10)
+GET http://localhost:3333/users/10 HTTP/1.1
+
+### Error Cases ###
+
+# GET user with non-existent ID
+GET http://localhost:3333/users/9999 HTTP/1.1
+
+###
+
+# GET user with invalid ID (should return 400)
+GET http://localhost:3333/users/invalid HTTP/1.1
+
+###
+
+# GET user with negative ID (should return 400)
+GET http://localhost:3333/users/-1 HTTP/1.1

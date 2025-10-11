@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
 /**
- * Script de Deploy Automatizado
- * 
- * Este script automatiza o fluxo de deploy:
- * 1. Commit e push na branch dev
+ * Automated Deploy Script
+ *
+ * This script automates the deploy flow:
+ * 1. Commit and push to dev branch
  * 2. Merge dev → beta
  * 3. Merge beta → main
- * 4. Retorna para a branch dev
- * 
- * Uso: node src/scripts/git/deploy.js [mensagem-do-commit]
+ * 4. Return to dev branch
+ *
+ * Usage: node src/scripts/git/deploy.js [commit-message]
  */
 
 import { execSync } from 'child_process';
@@ -20,7 +20,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Cores para output
+// Colors for output
 const colors = {
     reset: '\x1b[0m',
     bright: '\x1b[1m',
@@ -44,12 +44,12 @@ function execCommand(command, description) {
             stdio: 'pipe',
             cwd: process.cwd()
         });
-        log(`✅ ${description} concluído!`, 'green');
+        log(`✅ ${description} completed!`, 'green');
         return output;
     } catch (error) {
-        log(`❌ Erro ao executar: ${description}`, 'red');
-        log(`Comando: ${command}`, 'yellow');
-        log(`Erro: ${error.message}`, 'red');
+        log(`❌ Error executing: ${description}`, 'red');
+        log(`Command: ${command}`, 'yellow');
+        log(`Error: ${error.message}`, 'red');
         process.exit(1);
     }
 }
@@ -58,7 +58,7 @@ function getCurrentBranch() {
     try {
         return execSync('git branch --show-current', { encoding: 'utf8' }).trim();
     } catch (error) {
-        log('❌ Erro ao obter branch atual', 'red');
+        log('❌ Error getting current branch', 'red');
         process.exit(1);
     }
 }
@@ -68,71 +68,71 @@ function checkGitStatus() {
         const status = execSync('git status --porcelain', { encoding: 'utf8' });
         return status.trim();
     } catch (error) {
-        log('❌ Erro ao verificar status do Git', 'red');
+        log('❌ Error checking Git status', 'red');
         process.exit(1);
     }
 }
 
 function main() {
-    log('🚀 Iniciando deploy automatizado...', 'bright');
-    
-    // Verificar se estamos na branch dev
+    log('🚀 Starting automated deploy...', 'bright');
+
+    // Check if we are on dev branch
     const currentBranch = getCurrentBranch();
     if (currentBranch !== 'dev') {
-        log(`⚠️  Você está na branch '${currentBranch}', mas o deploy deve ser feito a partir da branch 'dev'`, 'yellow');
-        log('💡 Execute: git checkout dev', 'cyan');
+        log(`⚠️  You are on branch '${currentBranch}', but deploy must be done from 'dev' branch`, 'yellow');
+        log('💡 Run: git checkout dev', 'cyan');
         process.exit(1);
     }
-    
-    // Verificar se há alterações para commit
+
+    // Check if there are changes to commit
     const gitStatus = checkGitStatus();
     if (!gitStatus) {
-        log('ℹ️  Nenhuma alteração para commit', 'yellow');
-        log('💡 Faça suas alterações e tente novamente', 'cyan');
+        log('ℹ️  No changes to commit', 'yellow');
+        log('💡 Make your changes and try again', 'cyan');
         process.exit(0);
     }
-    
-    // Obter mensagem do commit
-    const commitMessage = process.argv[2] || 'feat: deploy automático';
-    
-    log(`\n📋 Resumo do deploy:`, 'bright');
-    log(`   Branch atual: ${currentBranch}`, 'cyan');
-    log(`   Mensagem do commit: ${commitMessage}`, 'cyan');
-    log(`   Alterações: ${gitStatus.split('\n').length} arquivo(s)`, 'cyan');
-    
-    // 1. Commit e push na branch dev
-    execCommand('git add .', 'Adicionando arquivos ao staging');
-    execCommand(`git commit -m "${commitMessage}"`, 'Fazendo commit na branch dev');
-    execCommand('git push origin dev', 'Fazendo push para origin/dev');
-    
+
+    // Get commit message
+    const commitMessage = process.argv[2] || 'feat: automated deploy';
+
+    log(`\n📋 Deploy summary:`, 'bright');
+    log(`   Current branch: ${currentBranch}`, 'cyan');
+    log(`   Commit message: ${commitMessage}`, 'cyan');
+    log(`   Changes: ${gitStatus.split('\n').length} file(s)`, 'cyan');
+
+    // 1. Commit and push to dev branch
+    execCommand('git add .', 'Adding files to staging');
+    execCommand(`git commit -m "${commitMessage}"`, 'Committing to dev branch');
+    execCommand('git push origin dev', 'Pushing to origin/dev');
+
     // 2. Merge dev → beta
-    execCommand('git checkout beta', 'Mudando para branch beta');
-    execCommand('git merge dev', 'Fazendo merge dev → beta');
-    execCommand('git push origin beta', 'Fazendo push para origin/beta');
-    
+    execCommand('git checkout beta', 'Switching to beta branch');
+    execCommand('git merge dev', 'Merging dev → beta');
+    execCommand('git push origin beta', 'Pushing to origin/beta');
+
     // 3. Merge beta → main
-    execCommand('git checkout main', 'Mudando para branch main');
-    execCommand('git merge beta', 'Fazendo merge beta → main');
-    execCommand('git push origin main', 'Fazendo push para origin/main');
-    
-    // 4. Retornar para dev
-    execCommand('git checkout dev', 'Retornando para branch dev');
-    
-    log('\n🎉 Deploy concluído com sucesso!', 'green');
-    log('\n📊 Resumo:', 'bright');
-    log('   ✅ Commit e push na branch dev', 'green');
+    execCommand('git checkout main', 'Switching to main branch');
+    execCommand('git merge beta', 'Merging beta → main');
+    execCommand('git push origin main', 'Pushing to origin/main');
+
+    // 4. Return to dev
+    execCommand('git checkout dev', 'Returning to dev branch');
+
+    log('\n🎉 Deploy completed successfully!', 'green');
+    log('\n📊 Summary:', 'bright');
+    log('   ✅ Commit and push to dev branch', 'green');
     log('   ✅ Merge dev → beta', 'green');
     log('   ✅ Merge beta → main', 'green');
-    log('   ✅ Retorno para branch dev', 'green');
-    
-    log('\n🔗 Links úteis:', 'bright');
+    log('   ✅ Return to dev branch', 'green');
+
+    log('\n🔗 Useful links:', 'bright');
     log('   GitHub: https://github.com/imdouglasoliveira/api-node', 'cyan');
     log('   Branch dev: https://github.com/imdouglasoliveira/api-node/tree/dev', 'cyan');
     log('   Branch beta: https://github.com/imdouglasoliveira/api-node/tree/beta', 'cyan');
     log('   Branch main: https://github.com/imdouglasoliveira/api-node/tree/main', 'cyan');
 }
 
-// Executar sempre
+// Always execute
 main();
 
 export { main as deploy };

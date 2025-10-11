@@ -1,0 +1,29 @@
+### Get Course by ID ###
+
+# GET to fetch course by id (ID: 1)
+GET http://localhost:3333/courses/1 HTTP/1.1
+
+###
+
+# GET to fetch course by id (ID: 5)
+GET http://localhost:3333/courses/5 HTTP/1.1
+
+###
+
+# GET to fetch course by id (ID: 10)
+GET http://localhost:3333/courses/10 HTTP/1.1
+
+### Error Cases ###
+
+# GET course with non-existent ID
+GET http://localhost:3333/courses/9999 HTTP/1.1
+
+###
+
+# GET course with invalid ID (should return 400)
+GET http://localhost:3333/courses/invalid HTTP/1.1
+
+###
+
+# GET course with negative ID (should return 400)
+GET http://localhost:3333/courses/-1 HTTP/1.1

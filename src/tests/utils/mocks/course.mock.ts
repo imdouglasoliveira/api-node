@@ -1,6 +1,6 @@
-
 import { fakerPT_BR as faker } from '@faker-js/faker';
 
+// Mock interface for course
 export interface CourseMock {
     id?: number;
     title: string;
@@ -9,6 +9,7 @@ export interface CourseMock {
     updated_at?: number;
 }
 
+// Generate a mock course
 export function generateCourseMock(id?: number): CourseMock {
     return {
         id: id,
@@ -19,6 +20,7 @@ export function generateCourseMock(id?: number): CourseMock {
     };
 }
 
+// Generate multiple mock courses
 export function generateCourseMocks(count: number): CourseMock[] {
     return Array.from({ length: count }, (_, i) => generateCourseMock(i + 1));
 }

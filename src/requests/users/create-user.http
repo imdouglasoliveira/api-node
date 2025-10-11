@@ -1,0 +1,71 @@
+### Create User - Single ###
+
+# POST to create a new user
+POST http://localhost:3333/users HTTP/1.1
+Content-Type: application/json
+
+{
+  "first_name": "João",
+  "last_name": "Silva",
+  "email": "joao.silva@example.com"
+}
+
+###
+
+# POST to create another user
+POST http://localhost:3333/users HTTP/1.1
+Content-Type: application/json
+
+{
+  "first_name": "Maria",
+  "last_name": "Santos",
+  "email": "maria.santos@example.com"
+}
+
+###
+
+# POST to create user with different data
+POST http://localhost:3333/users HTTP/1.1
+Content-Type: application/json
+
+{
+  "first_name": "Pedro",
+  "last_name": "Oliveira",
+  "email": "pedro.oliveira@example.com"
+}
+
+### Create User - Bulk ###
+
+# POST to create multiple users
+POST http://localhost:3333/users HTTP/1.1
+Content-Type: application/json
+
+[
+  { "first_name": "Ana", "last_name": "Costa", "email": "ana.costa@example.com" },
+  { "first_name": "Carlos", "last_name": "Ferreira", "email": "carlos.ferreira@example.com" },
+  { "first_name": "Beatriz", "last_name": "Lima", "email": "beatriz.lima@example.com" },
+  { "first_name": "Rafael", "last_name": "Alves", "email": "rafael.alves@example.com" },
+  { "first_name": "Juliana", "last_name": "Souza", "email": "juliana.souza@example.com" }
+]
+
+### Error Cases ###
+
+# POST with missing required fields (should return 400)
+POST http://localhost:3333/users HTTP/1.1
+Content-Type: application/json
+
+{
+  "first_name": "Test"
+}
+
+###
+
+# POST with invalid email (should return 400)
+POST http://localhost:3333/users HTTP/1.1
+Content-Type: application/json
+
+{
+  "first_name": "Test",
+  "last_name": "User",
+  "email": "invalid-email"
+}

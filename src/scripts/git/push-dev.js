@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
 /**
- * Script de Push para Branch Dev
- * 
- * Este script automatiza o envio de alterações para a branch dev:
- * 1. Verifica se há alterações para commit
- * 2. Adiciona todos os arquivos ao staging
- * 3. Faz commit com mensagem personalizada ou padrão
- * 4. Faz push para origin/dev
- * 
- * Uso: node src/scripts/git/push-dev.js [mensagem-do-commit]
+ * Push to Dev Branch Script
+ *
+ * This script automates sending changes to the dev branch:
+ * 1. Check if there are changes to commit
+ * 2. Add all files to staging
+ * 3. Commit with custom or default message
+ * 4. Push to origin/dev
+ *
+ * Usage: node src/scripts/git/push-dev.js [commit-message]
  */
 
 import { execSync } from 'child_process';
@@ -19,7 +19,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Cores para output
+// Colors for output
 const colors = {
     reset: '\x1b[0m',
     bright: '\x1b[1m',
@@ -38,17 +38,17 @@ function log(message, color = 'reset') {
 function execCommand(command, description) {
     try {
         log(`🔄 ${description}...`, 'blue');
-        const output = execSync(command, { 
-            encoding: 'utf8', 
+        const output = execSync(command, {
+            encoding: 'utf8',
             stdio: 'pipe',
             cwd: process.cwd()
         });
-        log(`✅ ${description} concluído!`, 'green');
+        log(`✅ ${description} completed!`, 'green');
         return output;
     } catch (error) {
-        log(`❌ Erro ao executar: ${description}`, 'red');
-        log(`Comando: ${command}`, 'yellow');
-        log(`Erro: ${error.message}`, 'red');
+        log(`❌ Error executing: ${description}`, 'red');
+        log(`Command: ${command}`, 'yellow');
+        log(`Error: ${error.message}`, 'red');
         process.exit(1);
     }
 }
@@ -57,7 +57,7 @@ function getCurrentBranch() {
     try {
         return execSync('git branch --show-current', { encoding: 'utf8' }).trim();
     } catch (error) {
-        log('❌ Erro ao obter branch atual', 'red');
+        log('❌ Error getting current branch', 'red');
         process.exit(1);
     }
 }
@@ -67,7 +67,7 @@ function checkGitStatus() {
         const status = execSync('git status --porcelain', { encoding: 'utf8' });
         return status.trim();
     } catch (error) {
-        log('❌ Erro ao verificar status do Git', 'red');
+        log('❌ Error checking Git status', 'red');
         process.exit(1);
     }
 }
@@ -75,7 +75,7 @@ function checkGitStatus() {
 function getUncommittedChanges() {
     const status = checkGitStatus();
     if (!status) return [];
-    
+
     return status.split('\n').map(line => {
         const status = line.substring(0, 2);
         const file = line.substring(3);
@@ -85,70 +85,70 @@ function getUncommittedChanges() {
 
 function formatFileStatus(status) {
     const statusMap = {
-        'M ': 'Modificado',
-        'A ': 'Adicionado',
-        'D ': 'Deletado',
-        'R ': 'Renomeado',
-        'C ': 'Copiado',
-        'U ': 'Não mesclado',
-        '??': 'Não rastreado',
-        '!!': 'Ignorado'
+        'M ': 'Modified',
+        'A ': 'Added',
+        'D ': 'Deleted',
+        'R ': 'Renamed',
+        'C ': 'Copied',
+        'U ': 'Unmerged',
+        '??': 'Untracked',
+        '!!': 'Ignored'
     };
-    
+
     return statusMap[status] || status;
 }
 
 function main() {
-    log('📤 Enviando alterações para branch dev...', 'bright');
-    
-    // Verificar branch atual
+    log('📤 Sending changes to dev branch...', 'bright');
+
+    // Check current branch
     const currentBranch = getCurrentBranch();
-    log(`\n🌿 Branch atual: ${currentBranch}`, 'green');
-    
-    // Verificar se há alterações para commit
+    log(`\n🌿 Current branch: ${currentBranch}`, 'green');
+
+    // Check if there are changes to commit
     const changes = getUncommittedChanges();
     if (changes.length === 0) {
-        log('\nℹ️  Nenhuma alteração para commit', 'yellow');
-        log('💡 Faça suas alterações e tente novamente', 'cyan');
+        log('\nℹ️  No changes to commit', 'yellow');
+        log('💡 Make your changes and try again', 'cyan');
         process.exit(0);
     }
-    
-    // Mostrar alterações
-    log('\n📝 Alterações encontradas:', 'yellow');
+
+    // Show changes
+    log('\n📝 Changes found:', 'yellow');
     changes.forEach(change => {
         const status = formatFileStatus(change.status);
         log(`   ${change.status} ${change.file} (${status})`, 'cyan');
     });
-    
-    // Obter mensagem do commit
-    const commitMessage = process.argv[2] || 'feat: atualização automática';
-    
-    log(`\n📋 Resumo do push:`, 'bright');
-    log(`   Branch atual: ${currentBranch}`, 'cyan');
-    log(`   Mensagem do commit: ${commitMessage}`, 'cyan');
-    log(`   Alterações: ${changes.length} arquivo(s)`, 'cyan');
-    
-    // 1. Adicionar arquivos ao staging
-    execCommand('git add .', 'Adicionando arquivos ao staging');
-    
-    // 2. Fazer commit
-    execCommand(`git commit -m "${commitMessage}"`, 'Fazendo commit');
-    
-    // 3. Fazer push para origin/dev
-    execCommand('git push origin dev', 'Fazendo push para origin/dev');
-    
-    log('\n🎉 Push para dev concluído com sucesso!', 'green');
-    log('\n📊 Resumo:', 'bright');
-    log('   ✅ Arquivos adicionados ao staging', 'green');
-    log('   ✅ Commit realizado', 'green');
-    log('   ✅ Push para origin/dev', 'green');
-    
-    log('\n🔗 Links úteis:', 'bright');
+
+    // Get commit message
+    const commitMessage = process.argv[2] || 'feat: automatic update';
+
+    log(`\n📋 Push summary:`, 'bright');
+    log(`   Current branch: ${currentBranch}`, 'cyan');
+    log(`   Commit message: ${commitMessage}`, 'cyan');
+    log(`   Changes: ${changes.length} file(s)`, 'cyan');
+
+    // 1. Add files to staging
+    execCommand('git add .', 'Adding files to staging');
+
+    // 2. Make commit
+    execCommand(`git commit -m "${commitMessage}"`, 'Committing changes');
+
+    // 3. Push to origin/dev
+    execCommand('git push origin dev', 'Pushing to origin/dev');
+
+    log('\n🎉 Push to dev completed successfully!', 'green');
+    log('\n📊 Summary:', 'bright');
+    log('   ✅ Files added to staging', 'green');
+    log('   ✅ Commit made', 'green');
+    log('   ✅ Pushed to origin/dev', 'green');
+
+    log('\n🔗 Useful links:', 'bright');
     log('   GitHub dev: https://github.com/imdouglasoliveira/api-node/tree/dev', 'cyan');
-    log('   Para fazer deploy completo: npm run deploy', 'cyan');
+    log('   To do full deploy: npm run deploy', 'cyan');
 }
 
-// Executar sempre
+// Always execute
 main();
 
 export { main as pushDev };

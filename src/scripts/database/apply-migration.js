@@ -3,62 +3,62 @@ import Database from 'better-sqlite3';
 import fs from 'fs';
 import path from 'path';
 
-// Função para aplicar migrações SQLite
+// Function to apply SQLite migrations
 function applyMigration(migrationFile) {
-    console.log(`📦 Aplicando migração: ${migrationFile}`);
-    
+    console.log(`📦 Applying migration: ${migrationFile}`);
+
     try {
-        // Ler arquivo de migração
+        // Read migration file
         const migrationSQL = fs.readFileSync(migrationFile, 'utf8');
-        
-        // Conectar ao banco SQLite
+
+        // Connect to SQLite database
         const sqlite = new Database('./src/database/dev.db');
         const db = drizzle(sqlite);
-        
-        // Executar migração
+
+        // Execute migration
         sqlite.exec(migrationSQL);
-        
-        console.log('✅ Migração aplicada com sucesso!');
-        
+
+        console.log('✅ Migration applied successfully!');
+
         sqlite.close();
-        
+
     } catch (error) {
-        console.error('❌ Erro ao aplicar migração:', error.message);
+        console.error('❌ Error applying migration:', error.message);
         process.exit(1);
     }
 }
 
-// Função principal
+// Main function
 function main() {
     const drizzleDir = './drizzle';
-    
+
     if (!fs.existsSync(drizzleDir)) {
-        console.error('❌ Diretório drizzle não encontrado');
+        console.error('❌ Drizzle directory not found');
         process.exit(1);
     }
-    
-    // Listar arquivos de migração
+
+    // List migration files
     const migrationFiles = fs.readdirSync(drizzleDir)
         .filter(file => file.endsWith('.sql'))
         .sort();
-    
+
     if (migrationFiles.length === 0) {
-        console.log('ℹ️  Nenhuma migração encontrada');
+        console.log('ℹ️  No migrations found');
         return;
     }
-    
-    console.log(`📋 Migrações encontradas: ${migrationFiles.length}`);
-    
-    // Aplicar cada migração
+
+    console.log(`📋 Migrations found: ${migrationFiles.length}`);
+
+    // Apply each migration
     migrationFiles.forEach(file => {
         const fullPath = path.join(drizzleDir, file);
         applyMigration(fullPath);
     });
-    
-    console.log('🎉 Todas as migrações foram aplicadas!');
+
+    console.log('🎉 All migrations have been applied!');
 }
 
-// Executar se chamado diretamente
+// Execute if called directly
 main();
 
 export { applyMigration };

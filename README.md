@@ -233,7 +233,10 @@ Tabelas principais definidas em `src/database/schema.ts`:
 - `npm test`: executa todos os 27 testes E2E
 - `npm run test:watch`: executa testes em modo watch
 - `npm run test:ui`: abre interface gráfica do Vitest
-- `npm run test:coverage`: gera relatório de cobertura de testes
+- `npm run test:coverage`: gera relatório de cobertura de código
+  - Relatório no terminal + HTML em `coverage/index.html`
+  - Métricas: linhas, funções, branches, statements
+  - Exclui: tests, scripts, configs
 
 ### Migrações
 - `npm run migrate:generate`: gera artefatos do Drizzle a partir do schema
@@ -344,9 +347,29 @@ npm run test:watch
 # Interface gráfica
 npm run test:ui
 
-# Cobertura
+# Cobertura de código
 npm run test:coverage
 ```
+
+### Relatório de Coverage
+O comando `npm run test:coverage` gera:
+
+**Terminal:**
+```
+ % Coverage report from v8
+--------------------------|---------|----------|---------|---------|
+File                      | % Stmts | % Branch | % Funcs | % Lines |
+--------------------------|---------|----------|---------|---------|
+All files                 |   85.5  |   75.0   |   90.0  |   85.5  |
+ routes/courses           |   95.0  |   87.5   |  100.0  |   95.0  |
+ routes/users             |   80.0  |   65.0   |   85.0  |   80.0  |
+...
+```
+
+**HTML:** Abra `coverage/index.html` no navegador para relatório visual interativo
+- 🟢 Verde: Código testado
+- 🔴 Vermelho: Código não testado
+- 🟡 Amarelo: Código parcialmente testado
 
 ## Dicas e solução de problemas
 
